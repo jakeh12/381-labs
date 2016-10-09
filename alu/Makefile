@@ -1,4 +1,4 @@
-top ?= alu_1bit_tb
+top ?= alu_1bit_overflow_tb
 time ?= 1000
 
 all:
@@ -6,10 +6,9 @@ all:
 	ghdl --remove
 	rm -rf work *.o $(top)
 	mkdir work
-	mkdir vcds
 	ghdl -i --workdir=work *.vhd
 	ghdl -m --workdir=work $(top)
-	ghdl -r --workdir=work $(top) --stop-time=$(time)ns --vcd=./vcds/$(top).vcd
+	ghdl -r --workdir=work $(top) --stop-time=$(time)ns --vcd=$(top).vcd
 	ghdl --clean
 	ghdl --remove
 	rm -rf work *.o $(top)

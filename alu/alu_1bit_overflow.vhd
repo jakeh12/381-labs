@@ -12,7 +12,8 @@ entity alu_1bit_overflow is
     less    : in std_logic;
     oC      : out std_logic;
     oRe     : out std_logic;
-    oSet    : out std_logic
+    oSet    : out std_logic;
+    oOverflow: out std_logic
     );
 end alu_1bit_overflow;
 
@@ -55,7 +56,7 @@ begin
 
     fAdder_out <= ((iA XOR iB_mux_out) XOR iC);
 
-    fAdder_out <= oSet;
+    oSet <= fAdder_out;
 
     alu_1bit_i: alu_1bit
         port map(
@@ -72,10 +73,10 @@ begin
     overflow_i: overflow
         port map(
         iA => iA,
-        iB_mux_out => iB,
+        iB => iB_mux_out,
         iBinv => iBinv,
-        fadder_out => iResult,
-        oOverflow => oRe
+        iResult => fadder_out,
+        oOverflow => oOverflow
         );
 
 end mixed;
