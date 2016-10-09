@@ -14,9 +14,10 @@ entity alu_1bit is
     );
 end alu_1bit;
 
-signal iB_mux_out: std_logic;
-
 architecture dataflow of alu_1bit is
+
+    signal iB_mux_out: std_logic;
+
 begin
 
     --invert b if needed
@@ -24,16 +25,16 @@ begin
         (NOT iB) when iBinv = '1';
 
     --output result
-    oRe <= (iA AND iB_mux_out)          when sel = '000' else
-        (iA OR iB_mux_out)              when sel = '001' else
-        (iA XOR iB_mux_out)             when sel = '010' else
-        (iA NAND iB_mux_out)            when sel = '011' else
-        (iA NOR iB_mux_out)             when sel = '100' else
-        ((iA XOR iB_mux_out) XOR iC)    when sel = '101' else
-        less                            when sel = '110' else;
+    oRe <= (iA AND iB_mux_out)          when sel = "000" else
+        (iA OR iB_mux_out)              when sel = "001" else
+        (iA XOR iB_mux_out)             when sel = "010" else
+        (iA NAND iB_mux_out)            when sel = "011" else
+        (iA NOR iB_mux_out)             when sel = "100" else
+        ((iA XOR iB_mux_out) XOR iC)    when sel = "101" else
+        less                            when sel = "110";
 
     --carry out
-    oC <= (iA AND iB_mux_out) OR (iA AND iC) OR (iB_mux_out AND iC);
+    oC <= ((iA AND iB_mux_out) OR (iA AND iC) OR (iB_mux_out AND iC));
 
 
 end dataflow;

@@ -19,5 +19,5 @@ begin
                     ((NOT iA) AND (NOT iB) AND (NOT iBinv) AND iResult) OR
                     ((NOT iA) AND iB AND iBinv AND iResult) OR
                     (iA AND (NOT iB) AND iBinv AND (NOT iResult))
-                )
+                );
 end dataflow;

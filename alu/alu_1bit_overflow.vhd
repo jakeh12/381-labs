@@ -16,7 +16,7 @@ entity alu_1bit_overflow is
     );
 end alu_1bit_overflow;
 
-architecture structural of alu_1bit_overflow is
+architecture mixed of alu_1bit_overflow is
 
     --components
 
@@ -55,7 +55,7 @@ begin
 
     fAdder_out <= ((iA XOR iB_mux_out) XOR iC);
 
-    fAdder_out => oSet;
+    fAdder_out <= oSet;
 
     alu_1bit_i: alu_1bit
         port map(
@@ -78,4 +78,4 @@ begin
         oOverflow => oRe
         );
 
-end structural;
+end mixed;
