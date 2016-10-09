@@ -59,7 +59,7 @@ begin
     -- second row special case
     second_row_adder : if i = 1 generate
 
-      row_temp <= "0" & s_partial_product(0)(n-2 downto 1);
+      row_temp <= '0' & s_partial_product(0)(n-2 downto 1);
       second_row_adder : adder_nbit
         port map (
           i_A    => s_partial_product(1),
