@@ -14,10 +14,22 @@ entity overflow is
 end overflow;
 
 architecture dataflow of overflow is
+    signal ovr : std_logic_vector(3 downto 0);
 begin
-    oOverflow <= (  (iA AND iB AND (NOT iBinv) AND (NOT iResult)) OR
+    -- ovr(3) <= iA;
+    -- ovr(2) <= iB;
+    -- ovr(1) <= iBinv;
+    -- ovr(0) <= iResult;
+    --
+    -- with ovr select oOverflow <=
+    --     '1' when "1100",
+    --     '1' when "0001",
+    --
+    --     '0' when others;
+    oOverflow <= (
+                    (iA AND iB AND (NOT iBinv) AND (NOT iResult)) OR
                     ((NOT iA) AND (NOT iB) AND (NOT iBinv) AND iResult) OR
                     ((NOT iA) AND iB AND iBinv AND iResult) OR
-                    (iA AND (NOT iB) AND iBinv AND (NOT iResult))
+                    (iA AND (iB) AND iBinv AND (NOT iResult))
                 );
 end dataflow;

@@ -1,4 +1,4 @@
-top ?= alu_1bit_overflow_tb
+top ?= alu_32bit_tb
 time ?= 1000
 
 all:
