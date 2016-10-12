@@ -1,9 +1,12 @@
 *
+!*.md
 !*.vhd
 !.gitignore
 !*/
+!*/*.md
 !*/*.vhd
 !*/*/
+!*/*/*.md
 !*/*/*.vhd
 !Makefile
 !*/Makefile
