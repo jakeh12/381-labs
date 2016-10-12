@@ -24,12 +24,15 @@ architecture structural of multiplier_array is
   end component;
 
 
-  type array2d is array (natural range <>) of std_logic_vector (n downto 0);
+  type array2d is array (natural range <>) of std_logic_vector (n-1 downto 0);
   signal s_partial_product : array2d (n-1 downto 0);
   signal s_partial_sum     : array2d (n-1 downto 0);
-
-
-  signal row_temp : std_logic_vector (n-1 downto 0);
+  -- we need to keep track of the carrys
+  signal s_partial_sum_carry : std_logic_vector (n-1 downto 0);
+  
+  signal s_partial_sum_temp : array2d (n-1 downto 0);  -- temp for
+                                                          -- concatenation
+  
 begin
 
   -----------------------------------------------------------------------------
@@ -54,48 +57,52 @@ begin
     -- first row special case
     first_row_adder : if i = 0 generate
       o_P(0) <= s_partial_product(0)(0);
+      s_partial_sum_carry(0) <= '0';  -- not necessary
     end generate first_row_adder;
 
     -- second row special case
     second_row_adder : if i = 1 generate
 
-      row_temp <= '0' & s_partial_product(0)(n-2 downto 1);
+      s_partial_sum_temp(0) <= '0' & s_partial_product(0)(n-1 downto 1);
       second_row_adder : adder_nbit
         port map (
           i_A    => s_partial_product(1),
-          i_B    => row_temp,
+          i_B    => s_partial_sum_temp(0),
           i_Cin  => '0',
           o_S    => s_partial_sum(1),
-          o_Cout => s_partial_sum(1)(n));  -- carry to be used for next sum
+          o_Cout => s_partial_sum_carry(1));  -- carry to be used for next sum
 
       o_P(1) <= s_partial_sum(1)(0);
     end generate second_row_adder;
 
     -- intermediate rows
     intermediate_row_adder : if i > 1 and i < n-1 generate
-      
+
+      s_partial_sum_temp(i) <= s_partial_sum_carry(i-1) & s_partial_sum(i-1)(n-1 downto 1);
       row_i_adder : adder_nbit
         port map (
           i_A    => s_partial_product(i),
-          i_B    => s_partial_sum(i-1)(i+n downto i+1),  -- previous sum shifted left
+          i_B    => s_partial_sum_temp(i),  -- previous sum shifted left
           i_Cin  => '0',
           o_S    => s_partial_sum(i),
-          o_Cout => s_partial_sum(i)(n));  -- carry to be used for next sum
+          o_Cout => s_partial_sum_carry(i));  -- carry to be used for next sum
 
       o_P(i) <= s_partial_sum(i)(0);
     end generate intermediate_row_adder;
 
     -- last row
     last_row_adder : if i = n-1 generate
+
+      s_partial_sum_temp(i) <= s_partial_sum_carry(i-1) & s_partial_sum(i-1)(n-1 downto 1);
       last_row_adder : adder_nbit
         port map (
           i_A    => s_partial_product(i),
-          i_B    => s_partial_sum(i-1)(2*n-1 downto n),  -- previous sum shifted left
+          i_B    => s_partial_sum_temp(i),  -- previous sum shifted left
           i_Cin  => '0',
           o_S    => s_partial_sum(i),
-          o_Cout => s_partial_sum(i)(n));  -- carry to be used for next sum
+          o_Cout => s_partial_sum_carry(i));  -- carry to be used for next sum
 
-      o_P <= s_partial_sum(n-1)(2*n-1 downto n);
+      o_P(2*n-1 downto n-1) <= s_partial_sum_carry(i) & s_partial_sum(i);
     end generate last_row_adder;
     
   end generate sum_partial_products;

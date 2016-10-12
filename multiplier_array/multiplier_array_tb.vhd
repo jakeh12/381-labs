@@ -28,8 +28,8 @@ begin  -- architecture behavioral
   -- purpose: test bench for component multiplier_array
   test_bench: process is
   begin  -- process test_bench
-    s_M <= (others => '1');
-    s_Q <= (others => '1');
+    s_M <= X"12345678";
+    s_Q <= X"00000002";
     wait for 10 ns;
     wait;
   end process test_bench;
