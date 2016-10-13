@@ -10,15 +10,15 @@ architecture behavioral of mips_shifter_tb is
    component mips_shifter is
       port (
        i_A      : in  std_logic_vector (31 downto 0);
-       i_Shamt  : in  std_logic_vector (4 downto 0);
-       i_Shdir  : in  std_logic;
-       i_Shtype : in  std_logic;
+       i_ShAmt  : in  std_logic_vector (4 downto 0);
+       i_ShDir  : in  std_logic;
+       i_ShType : in  std_logic;
        o_F      : out std_logic_vector(31 downto 0));
   end component;
 
    signal s_A, s_F : std_logic_vector (31 downto 0);
-   signal s_Shamt : std_logic_vector (4 downto 0);
-   signal s_Shdir, s_Shtype : std_logic;
+   signal s_ShAmt : std_logic_vector (4 downto 0);
+   signal s_ShDir, s_ShType : std_logic;
    
 begin  -- architecture behavioral
 
@@ -34,26 +34,37 @@ begin  -- architecture behavioral
   testbench: process is
   begin  -- process testbench
 
-    s_A <= X"000000F0";
+    s_A <= X"FFFFFFFF";
     s_Shamt <= "00000";
     s_Shdir <= '0';
     s_Shtype <= '0';
     wait for 10 ns;
 
 
-    
-    s_A <= X"000000F0";
+
+    s_A <= X"FFFFFFFF";
+    s_Shamt <= "00001";
+    s_Shdir <= '0';
+    s_Shtype <= '0';
+    wait for 10 ns;
+
+
+
+    s_A <= X"FFFFFFFF";
     s_Shamt <= "00010";
     s_Shdir <= '0';
     s_Shtype <= '0';
     wait for 10 ns;
 
-    
-    s_A <= X"000000F0";
-    s_Shamt <= "00010";
-    s_Shdir <= '1';
-    s_Shtype <= '1';
+
+
+    s_A <= X"FFFFFFFF";
+    s_Shamt <= "00100";
+    s_Shdir <= '0';
+    s_Shtype <= '0';
     wait for 10 ns;
+
+    
     wait;
   end process testbench;
 
