@@ -12,5 +12,4 @@ Report:
 
 https://docs.google.com/a/iastate.edu/document/d/16btQY3bSWAu7nnCcnYKk19mj47fAf_z0XikZMqEuLJc/edit?usp=sharing
 
-![MIPS Datapath](https://www.cise.ufl.edu/~mssz/CompOrg/Fig4.23-MIPS-MCDP-wExceptions.gif)
-
+![MIPS Datapath](https://s10.postimg.org/5f222am1l/single_cycle_mips.png)
