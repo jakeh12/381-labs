@@ -11,3 +11,6 @@ https://docs.google.com/a/iastate.edu/spreadsheets/d/1mXHmbsyRXv4KM3Injx0UrEQ9bm
 Report:
 
 https://docs.google.com/a/iastate.edu/document/d/16btQY3bSWAu7nnCcnYKk19mj47fAf_z0XikZMqEuLJc/edit?usp=sharing
+
+![MIPS Datapath](https://www.cise.ufl.edu/~mssz/CompOrg/Fig4.23-MIPS-MCDP-wExceptions.gif)
+
