@@ -6,6 +6,7 @@ all:
 	ghdl --remove
 	rm -rf work *.o $(top)
 	mkdir work
+	ghdl -i --workdir=work */*.vhd
 	ghdl -i --workdir=work *.vhd
 	ghdl -m --workdir=work $(top)
 	ghdl -r --workdir=work $(top) --stop-time=$(time)ns --vcd=$(top).vcd
