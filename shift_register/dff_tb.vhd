@@ -56,7 +56,7 @@ begin  -- architecture behavioral
     s_async_clear <= '0';
     s_async_set   <= '0';
     wait for 10 ns;
-    assert s_q /= '0' and s_nq = '1' report "test failed (intial zero)" severity error;
+    assert s_q = '0' and s_nq = '1' report "test failed (intial zero)" severity error;
 
     s_d           <= '1';
     s_async_clear <= '0';
