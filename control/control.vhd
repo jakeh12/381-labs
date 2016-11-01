@@ -5,21 +5,29 @@ use ieee.std_logic_1164.all;
 entity mips_control is
 
   port (
-    i_instruction : in  std_logic_vector (31 downto 0);  -- instruction from the memory
-    o_RegDst      : out std_logic;      -- COMMENT ME
-    o_Jump        : out std_logic;      --
-    o_Branch      : out std_logic;      --
-    o_MemRead     : out std_logic;      --
-    o_MemToReg    : out std_logic;      --
-    o_ALUOp       : out std_logic_vector (1 downto 0);   --
-    o_MemWrite    : out std_logic;      --
-    o_ALUSrc      : out std_logic;      --
-    o_RegWrite    : out std_logic       --
+    i_instruction 	: in std_logic_vector (31 downto 0);  -- instruction from the memory
+    o_RdIsDest      	: out std_logic;      -- COMMENT ME
+    o_Link        	: out std_logic;      --
+    o_RtIsForceZero 	: out std_logic;      --
+    o_RegWrite     	: out std_logic;      --
+    o_ImmToAluB    	: out std_logic;      --
+    o_AluOp       	: out std_logic_vector (2 downto 0);   --
+    o_MemWrite    	: out std_logic;      --
+    o_MemSigned      	: out std_logic;      --
+    o_MemDataSize    	: out std_logic;      --
+    o_ShamSrc		: out std_logic;      --
+    o_RegWriteFromMem 	: out std_logic;      --
+    o_BranchOp 		: out std_logic_vector (1 downto 0);   --
+    o_JumpReg		: out std_logic;      --
+    o_Jump 		: out std_logic;      --
+    o_BranchEnable	: out std_logic	      --
     );
 
 end entity mips_control;
 -------------------------------------------------------------------------------
-architecture dataflow of mips_control is
+architecture rom of mips_control is
+
+  type rom_t is std_logic_vector(20 downto 0); --the size of all output bits
 
   -- checkout MIPS instruction formats (p. 120)
   alias a_op             : std_logic_vector (5 downto 0) is i_instruction(31 downto 26);
@@ -58,7 +66,7 @@ architecture dataflow of mips_control is
   constant OP_BLTZAL 	: std_logic_vector (5 downto 0) := "000001";
   constant OP_BGEZAL 	: std_logic_vector (5 downto 0) := "000001";
   constant OP_BLEZ 	: std_logic_vector (5 downto 0) := "000110";
-  constant OP_BGTZV 	: std_logic_vector (5 downto 0) := "000111";
+  constant OP_BGTZ 	: std_logic_vector (5 downto 0) := "000111";
   constant OP_J 	: std_logic_vector (5 downto 0) := "000010";
   constant OP_JAL 	: std_logic_vector (5 downto 0) := "000011";
   constant OP_JR 	: std_logic_vector (5 downto 0) := "001000";
@@ -106,102 +114,62 @@ architecture dataflow of mips_control is
   constant BRANCH_BLTZAL : std_logic_vector (5 downto 0) := "10000";
   constant BRANCH_BGEZAL : std_logic_vector (5 downto 0) := "10001";
 
-begin  -- architecture dataflow
+begin  -- 
 
-  -- purpose: generates control signals depending on the instruction
-  -- type   : combinational
-  -- inputs : i_instruction
-  -- outputs: o_RegDst, o_Jump, o_Branch, o_MemRead, o_MemToReg, o_ALUOp,
-  --          o_MemWrite, o_ALUSrc, o_RegWrite
-  generate_control : process (i_instruction) is
-  begin  -- process generate_control
+signal rom : rom_t := (
 
-    -- treat individual opcodes here
-    case a_op is
+	OP_MUL		=> "10010-0--00-000",
+	OP_ADD		=> "10010-0--00-000",
+	OP_ADDU		=> "10010-0--00-000",
+	OP_SUB		=> "10010-0--00-000",
+	OP_SUBU		=> "10010-0--00-000",
+	OP_ADDI
+	OP_ADDIU
+	OP_OR		=> "10010-0--00-000",
+	OP_ORI
+	OP_AND 		=> "10010-0--00-000",
+	OP_ANDI
+	OP_XOR		=> "10010-0--00-000",
+	OP_XORI
+	OP_NOR		=> "10010-0--00-000",
+	OP_SLT		=> "10010-0--00-000",
+	OP_SLTU		=> "10010-0--00-000",
+	OP_SLTI
+	OP_SLTIU
+	OP_BEQ
+	OP_BNE
+	OP_BLTZ
+	OP_BGEZ
+	OP_BLTZAL
+	OP_BGEZAL
+	OP_BLEZ
+	OP_BGTZ 
+	OP_J
+	OP_JAL
+	OP_JAL
+	OP_JR
+	OP_JALR
+	OP_LB
+	OP_LBU
+	OP_LH
+	OP_LHU
+	OP_LW
+	OP_SB
+	OP_SH
+	OP_SW
+	OP_SLL		=> "10010-0--00-000",
+	OP_SRL		=> "10010-0--00-000",
+	OP_SRA		=> "10010-0--00-000",
+	OP_SLLV		=> "10010-0--00-000",
+	OP_SRLV		=> "10010-0--00-000",
+	OP_SRAV		=> "10010-0--00-000",
+	OP_LUI
 
-      -------------------------------------------------------------------------
-      -- ALU op code, look at func field
-      -------------------------------------------------------------------------
-      when OP_ALU =>
+	
+	
+	
+	
+)
 
-        case a_func is
-
-          ---------------------------------------------------------------------
-          -- ADD: add
-          ---------------------------------------------------------------------
-          when FUNC_ADD =>
-            o_RegDst   <= '1';
-            o_Jump     <= '1';
-            o_Branch   <= '1';
-            o_MemRead  <= '1';
-            o_MemToReg <= '1';
-            o_ALUOp    <= "11";
-            o_MemWrite <= '1';
-            o_ALUSrc   <= '1';
-            o_RegWrite <= '1';
-
-          -------------------------------------------------------------------
-          -- ADDI: add immediate
-          -------------------------------------------------------------------
-          when FUNC_ADDI =>
-            o_RegDst   <= '1';
-            o_Jump     <= '1';
-            o_Branch   <= '1';
-            o_MemRead  <= '1';
-            o_MemToReg <= '1';
-            o_ALUOp    <= "11";
-            o_MemWrite <= '1';
-            o_ALUSrc   <= '1';
-            o_RegWrite <= '1';
-
-
-          when others =>
-            -- some default behavior for control
-            -- if all cases defined, it should never happen
-            -- probably safe to make it all '0'
-            o_RegDst   <= '1';
-            o_Jump     <= '1';
-            o_Branch   <= '1';
-            o_MemRead  <= '1';
-            o_MemToReg <= '1';
-            o_ALUOp    <= "11";
-            o_MemWrite <= '1';
-            o_ALUSrc   <= '1';
-            o_RegWrite <= '1';
-        end case;
-
-      -------------------------------------------------------------------------
-      -- LW: load word
-      -------------------------------------------------------------------------
-      when OP_LW =>
-        o_RegDst   <= '1';
-        o_Jump     <= '1';
-        o_Branch   <= '1';
-        o_MemRead  <= '1';
-        o_MemToReg <= '1';
-        o_ALUOp    <= "11";
-        o_MemWrite <= '1';
-        o_ALUSrc   <= '1';
-        o_RegWrite <= '1';
-
-      when others =>
-        -- some default behavior for control
-        -- if all cases defined, it should never happen
-        -- probably safe to make it all '0';
-        o_RegDst   <= '1';
-        o_Jump     <= '1';
-        o_Branch   <= '1';
-        o_MemRead  <= '1';
-        o_MemToReg <= '1';
-        o_ALUOp    <= "11";
-        o_MemWrite <= '1';
-        o_ALUSrc   <= '1';
-        o_RegWrite <= '1';
-
-    end case;
-
-  end process generate_control;
-
-
-end architecture dataflow;
+end architecture rom;
 -------------------------------------------------------------------------------
