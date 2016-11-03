@@ -1,17 +1,3 @@
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
--- PLEASE, GO THROUGH THIS FILE AND READ THE COMMENTS BELOW.
--- IF YOU DECIDE TO WRITE THE ASSEMBLY TESTING PROGRAMS:
----- 1) PROGRAM FOR TESTING ALL INSTRUCTIONS
----- 2) BUBBLE SORT DEMONSTRATION PROGRAM
----- 3) MERGE SORT DEMONSTRATION PROGRAM
--- I WILL TAKE CARE OF THE HARDWARE SIDE OF THINGS
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -21,7 +7,6 @@ entity mips is
   port (
     i_clk : in std_logic;
     i_rst : in std_logic
-   -- feel free to add any more signals if you feel like we need them!
     );
 
 end entity mips;
@@ -181,8 +166,8 @@ architecture mixed of mips is
   signal s_CurrentPC, s_NextPC, s_PCplus4, s_PCOut : std_logic_vector (31 downto 0);
   signal s_Instruction, s_JumpAddrShifted          : std_logic_vector (31 downto 0);
   signal s_BranchOffsetShifted, s_BranchAddress    : std_logic_vector (31 downto 0);
-  signal s_SignExtImmOrAddr : std_logic_vector (31 downto 0);
-  
+  signal s_SignExtImmOrAddr                        : std_logic_vector (31 downto 0);
+
 -- Instruction aliases
   -- checkout MIPS instruction formats (p. 120)                    
   alias a_Opcode     : std_logic_vector (5 downto 0) is s_Instruction(31 downto 26);
@@ -198,23 +183,18 @@ architecture mixed of mips is
 
   -- Register File signals
   signal s_RsReadData, s_RtReadData : std_logic_vector (31 downto 0);
-  signal s_RegWriteAddr : std_logic_vector (31 downto 0);
-  signal s_RegWriteAddrSource : std_logic_vector (1 downto 0);
-  
+  signal s_RegWriteAddr             : std_logic_vector (31 downto 0);
+  signal s_RegWriteAddrSource       : std_logic_vector (1 downto 0);
+
+
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- Architecture DEFINITION HERE
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 begin  -- architecture mixed
-
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -- THE FOLLOWING IS THE ACTUAL STRUCTURAL ARCHITECTURE
-  ----- PORT DEFINITIONS, WIRING STUFF TOGETHER, ...
-  ----- USE DATAFLOW MUX (APPROVED BY ZAMBRENO, WILL SAVE SOME TIME)
-  -------- E.G.: muxed_signal <= zero_signal when control_signal = '0' else one_signal;
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-
-
 
   -----------------------------------------------------------------------------
   -- Main Control
@@ -298,12 +278,12 @@ begin  -- architecture mixed
       );
   end component;
 
-  imm_sign_ext: extender
+  imm_sign_ext : extender
     port map (
       i_isSigned => '1',
       i_small    => a_ImmOrAddr,
       o_big      => s_SignExtImmOrAddr);
-  
+
   shifter_BranchOffset : n_shifter
     port map (
       i_A   => s_SignExtImmOrAddr,
@@ -335,9 +315,14 @@ begin  -- architecture mixed
     X"00000000"      when others;       -- should never happen
 
 
-  
 
 
+
+
+  -----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
   -- Register File
   -----------------------------------------------------------------------------
@@ -352,8 +337,8 @@ begin  -- architecture mixed
   -----------------------------------------------------------------------------
   with s_RegWriteAddrSource select
     s_RegWriteAddr <=
-    a_Rd when "00",
-    a_Rt when "01",
+    a_Rd    when "00",
+    a_Rt    when "01",
     "11111" when "1-",                  -- $ra for linking
     "00000" when others;                -- should never happen
 
@@ -382,7 +367,7 @@ begin  -- architecture mixed
   -- 1 = $0
   -----------------------------------------------------------------------------
   s_RtReadAddr <= a_Rt when s_RtReadAddrSource = '0' else "00000";
-  
+
   register_file : mips_regfile
     port map(
       i_raddr1  => a_Rs,
@@ -402,18 +387,52 @@ begin  -- architecture mixed
 
   -- we need to discuss the implementation of this
 
+
+
+
+
+
+  -----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
+  -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
   -- ALU
   -----------------------------------------------------------------------------
 
+  -----------------------------------------------------------------------------
+  -- s_ALUInputBSource mux
+  -----------------------------------------------------------------------------
+  -- chooses between register file output and immediate value
+  -- 0 = $Rt
+  -- 1 = SignExtImm
+  -----------------------------------------------------------------------------
+  s_ALUInputB <= s_RtReadData when s_ALUInputBSource = '0' else s_SignExtImmOrAddr;
+
+
+  -----------------------------------------------------------------------------
+  -- s_ALUShiftAmountSource mux
+  -----------------------------------------------------------------------------
+  -- chooses between different sources of shift amount
+  -- 00 = Shift amount from the instruction
+  -- 01 = Shift amount from register (variable shift)
+  -- 1- = Shift amount by constant 16 (used for LUI)
+  -----------------------------------------------------------------------------
+  with s_ALUShiftAmountSource select
+    s_ALUShiftAmount <=
+    a_Shamt                  when "00",
+    s_RsReadData(4 downto 0) when "01",
+    "10000"                  when "1-",
+    "00000"                  when others;  -- should never happen
+  
   alu : mips_alu
     port map (
-      i_A           => s_A,
-      i_B           => s_B,
-      o_R           => s_R,
-      i_ShiftAmount => s_ShiftAmount,
-      i_Function    => s_Function,
-      o_ZeroFlag    => s_ZeroFlag);
+      i_A           => s_RsReadData,
+      i_B           => s_ALUInputB,
+      o_R           => s_ALUResult,
+      i_ShiftAmount => s_ALUShiftAmountSource,
+      i_Function    => s_ALUControlFunctOutput,  -- need to create this signal
+                                                 -- in ALU Control
+      o_ZeroFlag    => s_ALUZeroFlag);
 
 
   -----------------------------------------------------------------------------
@@ -428,13 +447,13 @@ begin  -- architecture mixed
 
   data_memory : mips_mem
     port map(
-      i_addr   => s_addr,
-      i_wdata  => s_wdata,
-      i_size   => s_size,
-      i_signed => s_signed,
-      i_wen    => s_wen,
-      i_clk    => s_clk,
-      o_rdata  => s_rdata);
+      i_addr   => s_ALUResult,
+      i_wdata  => s_RtReadData,
+      i_size   => s_MemDataLength,
+      i_signed => s_MemDataSigned,
+      i_wen    => s_MemWriteEnable,
+      i_clk    => i_Clk,
+      o_rdata  => s_MemReadData);
 
 end architecture mixed;
 -------------------------------------------------------------------------------
