@@ -117,25 +117,25 @@ architecture mixed of mips is
       o_BranchEnable      : out std_logic       --
       );
   
-  end entity mips_control;
+  end component mips_control;
 
 --signals
-	s_instruction       : in std_logic_vector (31 downto 0);  -- instruction from the memory
-      s_RdIsDest          : out std_logic;      -- COMMENT ME
-      s_Link              : out std_logic;      --
-      s_RtIsForceZero     : out std_logic;      --
-      s_RegWrite          : out std_logic;      --
-      s_ImmToAluB         : out std_logic;      --
-      s_AluOp             : out std_logic_vector (2 downto 0);   --
-      s_MemWrite          : out std_logic;      --
-      s_MemSigned         : out std_logic;      --
-      s_MemDataSize       : out std_logic;      --
-      s_ShamSrc           : out std_logic;      --
-      s_RegWriteFromMem   : out std_logic;      --
-      s_BranchOp          : out std_logic_vector (1 downto 0);   --
-      s_JumpReg           : out std_logic;      --
-      s_Jump              : out std_logic;      --
-      s_BranchEnable      : out std_logic;       --
+      signal s_instruction       : std_logic_vector (31 downto 0);  -- instruction from the memory
+      signal s_RdIsDest          : std_logic;      -- COMMENT ME
+      signal s_Link              : std_logic;      --
+      signal s_RtIsForceZero     : std_logic;      --
+      signal s_RegWrite          : std_logic;      --
+      signal s_ImmToAluB         : std_logic;      --
+      signal s_AluOp             : std_logic_vector (2 downto 0);   --
+      signal s_MemWrite          : std_logic;      --
+      signal s_MemSigned         : std_logic;      --
+      signal s_MemDataSize       : std_logic;      --
+      signal s_ShamSrc           : std_logic;      --
+      signal s_RegWriteFromMem   : std_logic;      --
+      signal s_BranchOp          : std_logic_vector (1 downto 0);   --
+      signal s_JumpReg           : std_logic;      --
+      signal s_Jump              : std_logic;      --
+      signal s_BranchEnable      : std_logic;       --
   
   
 begin  -- architecture mixed
@@ -157,7 +157,7 @@ begin  -- architecture mixed
   -- Main Control
   -----------------------------------------------------------------------------
   
-main_control : mips_conrtrol
+main_control : mips_control
 	port map ( 
    	i_instruction    => s_instruction,
       o_RdIsDest         => s_RdIsDest,
@@ -174,8 +174,7 @@ main_control : mips_conrtrol
       o_BranchOp          =>s_BranchOp,
       o_JumpReg           =>s_JumpReg,
       o_Jump              =>s_Jump,
-      o_BranchEnable      =>s_BranchEnable,
-);
+      o_BranchEnable      =>s_BranchEnable);
 
   -----------------------------------------------------------------------------
   -- Instruction Fetch Logic
