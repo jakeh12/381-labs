@@ -8,7 +8,7 @@ entity mips_alu is
     i_B           : in  std_logic_vector (31 downto 0);
     o_R           : out std_logic_vector (31 downto 0);
     i_ShiftAmount : in  std_logic_vector (4 downto 0);
-    i_Function    : in std_logic_vector (3 downto 0);
+    i_Function    : in std_logic_vector (5 downto 0);
     o_ZeroFlag    : out std_logic);
 end entity mips_alu;
 -------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ architecture structural of mips_alu is
 
   signal s_isUnsignedSet, s_CarryIn, s_PassCarryIn, s_InvertA, s_InvertB : std_logic;
   signal s_Operation : std_logic_vector (1 downto 0);
-  
+  alias a_ShiftAmountVar : std_logic_vector (4 downto 0) is i_A (4 downto 0);
 
   component mips_shifter is
       port (
@@ -58,26 +58,30 @@ architecture structural of mips_alu is
 
 
   --FUNCTION CODES
-  constant FUNC_ADD  : std_logic_vector (3 downto 0) := "0000";
-  constant FUNC_ADDU : std_logic_vector (3 downto 0) := "0001";
-  constant FUNC_SUB  : std_logic_vector (3 downto 0) := "0010";
-  constant FUNC_SUBU : std_logic_vector (3 downto 0) := "0011";
-  constant FUNC_OR   : std_logic_vector (3 downto 0) := "0100";
-  constant FUNC_AND  : std_logic_vector (3 downto 0) := "0101";
-  constant FUNC_XOR  : std_logic_vector (3 downto 0) := "0110";
-  constant FUNC_NOR  : std_logic_vector (3 downto 0) := "0111";
-  constant FUNC_SLT  : std_logic_vector (3 downto 0) := "1000";
-  constant FUNC_SLTU : std_logic_vector (3 downto 0) := "1001";
-  constant FUNC_MUL  : std_logic_vector (3 downto 0) := "1010";
-  constant FUNC_SLL  : std_logic_vector (3 downto 0) := "1011";
-  constant FUNC_SRL  : std_logic_vector (3 downto 0) := "1100";
-  constant FUNC_SRA  : std_logic_vector (3 downto 0) := "1101";
+  constant FUNC_ADD  : std_logic_vector (5 downto 0) := "100000";
+  constant FUNC_ADDU : std_logic_vector (5 downto 0) := "100001";
+  constant FUNC_SUB  : std_logic_vector (5 downto 0) := "100010";
+  constant FUNC_SUBU : std_logic_vector (5 downto 0) := "100011";
+  constant FUNC_OR   : std_logic_vector (5 downto 0) := "100101";
+  constant FUNC_AND  : std_logic_vector (5 downto 0) := "001101";
+  constant FUNC_XOR  : std_logic_vector (5 downto 0) := "100110";
+  constant FUNC_NOR  : std_logic_vector (5 downto 0) := "100111";
+  constant FUNC_SLT  : std_logic_vector (5 downto 0) := "101010";
+  constant FUNC_SLTU : std_logic_vector (5 downto 0) := "101001";
+  constant FUNC_MUL  : std_logic_vector (5 downto 0) := "011000";
+  constant FUNC_SLL  : std_logic_vector (5 downto 0) := "000000";
+  constant FUNC_SRL  : std_logic_vector (5 downto 0) := "000010";
+  constant FUNC_SRA  : std_logic_vector (5 downto 0) := "000011";
+  constant FUNC_SLLV  : std_logic_vector (5 downto 0) := "000100";
+  constant FUNC_SRLV  : std_logic_vector (5 downto 0) := "000110";
+  constant FUNC_SRAV  : std_logic_vector (5 downto 0) := "000111";
 
-
+  
   signal s_ResultALU : std_logic_vector (31 downto 0);
   signal s_ResultMultiplier: std_logic_vector (31 downto 0);
   signal s_ResultShifter : std_logic_vector (31 downto 0);
-  
+
+  signal s_ShiftAmount : std_logic_vector (4 downto 0);
   
 begin  -- architecture structural
 
@@ -98,10 +102,12 @@ begin  -- architecture structural
       o_ZeroFlag         => o_ZeroFlag);
 
 
+  s_ShiftAmount <= i_ShiftAmount when i_Function = FUNC_SLL | FUNC_SRL | FUNC_SRA else a_ShiftAmountVar;
+
   shifter: mips_shifter
     port map (
       i_A      => i_B,
-      i_Shamt  => i_ShiftAmount,
+      i_Shamt  => s_ShiftAmount,
       i_Shdir  => s_ShiftDirection,
       i_Shtype => s_ShiftType,
       o_F      => s_ResultShifter);
@@ -119,7 +125,7 @@ begin  -- architecture structural
     o_R <=
     s_ResultALU when FUNC_ADD | FUNC_ADDU | FUNC_SUB | FUNC_SUBU | FUNC_OR | FUNC_AND | FUNC_XOR | FUNC_NOR | FUNC_SLT | FUNC_SLTU,
     s_ResultMultiplier when FUNC_MUL,
-    s_ResultShifter when FUNC_SLL | FUNC_SRL | FUNC_SRA,
+    s_ResultShifter when FUNC_SLL | FUNC_SRL | FUNC_SRA | FUNC_SLLV | FUNC_SRLV | FUNC_SRAV,
     X"00000000" when others;
 
   
@@ -159,13 +165,13 @@ begin  -- architecture structural
   
   with i_Function select
     s_ShiftDirection <=
-    '1' when FUNC_SRL | FUNC_SRA,
+    '1' when FUNC_SRL | FUNC_SRA | FUNC_SRLV | FUNC_SRAV,
     '0' when others;
 
 
   with i_Function select
     s_ShiftType <=
-    '1' when FUNC_SRA,
+    '1' when FUNC_SRA | FUNC_SRAV,
     '0' when others;
   
   

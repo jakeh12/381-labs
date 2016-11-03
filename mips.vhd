@@ -13,10 +13,14 @@ end entity mips;
 -------------------------------------------------------------------------------
 architecture mixed of mips is
 
-  -----------------------------------------------------------------------------
-  -- This is the spot where we put all of our component prototypes
-  -----------------------------------------------------------------------------
-
+  -- branch control
+ component branch_control is
+  port (
+    i_BranchType                : in  std_logic_vector (2 downto 0);
+    i_ALUFlagZero, i_ALUFlagNeg : in  std_logic;
+    o_BranchDecision            : out std_logic_vector);
+end component branch_control;
+  
 
   -- n-position shifter
   component n_shifter is
@@ -264,20 +268,6 @@ begin  -- architecture mixed
       i_Sel => '1',
       o_F   => s_JumpAddrShifted);
 
-
-  -- extender
-  component extender is
-    generic (
-      n_small : integer := 16;
-      n_big   : integer := 32
-      );
-    port (
-      i_isSigned : in  std_logic;
-      i_small    : in  std_logic_vector(n_small-1 downto 0);
-      o_big      : out std_logic_vector(n_big-1 downto 0)
-      );
-  end component;
-
   imm_sign_ext : extender
     port map (
       i_isSigned => '1',
@@ -297,14 +287,13 @@ begin  -- architecture mixed
 
   -----------------------------------------------------------------------------
   -- s_NextPCSource mux
-  --
+  -----------------------------------------------------------------------------
   -- Select next program counter source
   --
   -- 00 = PC+4
   -- 01 = BranchAddress
   -- 10 = JumpAddress
   -- 11 = JumpRegAddress
-  -- others = reset state (impossible)
   -----------------------------------------------------------------------------
   with s_NextPCSource select
     s_NextPC <=
@@ -439,7 +428,12 @@ begin  -- architecture mixed
   -- Branch Control
   -----------------------------------------------------------------------------
 
-  -- this should be very easy to implement, I can take care of it
+  branch_ctl: branch_control
+    port map (
+      i_BranchType     => s_BranchType,
+      i_ALUFlagZero    => s_ALUFlagZero,
+      i_ALUFlagNeg     => s_ALUResult(31),
+      o_BranchDecision => s_BranchDecision);
 
   -----------------------------------------------------------------------------
   -- Data Memory
