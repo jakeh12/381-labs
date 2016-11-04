@@ -3,26 +3,24 @@ library ieee;
 use ieee.std_logic_1164.all;
 -------------------------------------------------------------------------------
 entity mips is
-  
+  generic(
+    program_file : string := "prog.mif");
   port (
     i_clk : in std_logic;
-    i_rst : in std_logic
-    );
-
+    i_rst : in std_logic);
 end entity mips;
 -------------------------------------------------------------------------------
 architecture mixed of mips is
 
-  -- branch control
- component branch_control is
-  port (
-    i_BranchType                : in  std_logic_vector (2 downto 0);
-    i_ALUFlagZero, i_ALUFlagNeg : in  std_logic;
-    o_BranchDecision            : out std_logic_vector);
-end component branch_control;
-  
+  -- Branch control
+  component branch_control is
+    port (
+      i_BranchType                : in  std_logic_vector (2 downto 0);
+      i_ALUFlagZero, i_ALUFlagNeg : in  std_logic;
+      o_BranchDecision            : out std_logic_vector);
+  end component branch_control;
 
-  -- n-position shifter
+  -- N-position shifter
   component n_shifter is
     generic (
       n : natural := 2);
@@ -34,7 +32,7 @@ end component branch_control;
       o_F   : out std_logic_vector (31 downto 0));
   end component n_shifter;
 
-  -- extender
+  -- Extender
   component extender is
     generic (
       n_small : integer := 16;
@@ -47,8 +45,7 @@ end component branch_control;
       );
   end component;
 
-
-  -- full adder n-bit
+  -- Full adder n-bit
   component fan is
     generic(
       n : integer := 32
@@ -61,14 +58,12 @@ end component branch_control;
       );
   end component;
 
-
-  -- instruction memory
-  -- I MADE THIS ONE SO IT CAN TAKE THE MARS MACHINE FILE DIRECTLY (SPEED UP DEBUGGING)
+  -- Instruction memory
   component ram is
     generic (
       n         : natural := 32;        -- width of word in bits
       l         : natural := 10;  -- width of address bus in bits                                 
-      init_file : string  := "ram.mif");  -- memory intialization file
+      init_file : string  := program_file);  -- memory intialization file
     port (
       i_addr  : in  std_logic_vector (n-1 downto 0);  -- address input
       i_wdata : in  std_logic_vector (n-1 downto 0);  -- data input
@@ -77,7 +72,7 @@ end component branch_control;
       i_clk   : in  std_logic);
   end component ram;
 
-  -- program counter
+  -- Program counter
   component reg is
     generic (
       n : natural := 32);                             -- width of word in bits
@@ -89,7 +84,7 @@ end component branch_control;
       i_clk   : in  std_logic);                       -- clock input
   end component reg;
 
-  -- register file
+  -- Register file
   component mips_regfile is
     port(i_raddr1  : in  std_logic_vector(4 downto 0);
          i_raddr2  : in  std_logic_vector(4 downto 0);
@@ -103,18 +98,18 @@ end component branch_control;
   end component;
 
 
-  -- alu
+  -- ALU
   component mips_alu is
     port (
       i_A           : in  std_logic_vector (31 downto 0);
       i_B           : in  std_logic_vector (31 downto 0);
       o_R           : out std_logic_vector (31 downto 0);
       i_ShiftAmount : in  std_logic_vector (4 downto 0);
-      i_Function    : in  std_logic_vector (3 downto 0);
+      i_Function    : in  std_logic_vector (5 downto 0);
       o_ZeroFlag    : out std_logic);
   end component;
 
-  -- data memory
+  -- Data memory
   component mips_mem is
     port (
       i_addr   : in  std_logic_vector(31 downto 0);
@@ -126,7 +121,12 @@ end component branch_control;
       o_rdata  : out std_logic_vector(31 downto 0));
   end component;
 
-  -- control
+
+  -----------------------------------------------------------------------------
+  -- OLD
+  -----------------------------------------------------------------------------
+ 
+  -- Main control
   component mips_control is
     port (
       i_instruction     : in  std_logic_vector (31 downto 0);  -- instruction from the memory
@@ -149,7 +149,7 @@ end component branch_control;
 
   end component mips_control;
 
--- Control signals
+  -- Control signals
   signal s_RdIsDest        : std_logic;                      -- COMMENT ME
   signal s_Link            : std_logic;                      --
   signal s_RtIsForceZero   : std_logic;                      --
@@ -166,14 +166,45 @@ end component branch_control;
   signal s_Jump            : std_logic;                      --
   signal s_BranchEnable    : std_logic;                      --
 
--- Instruction Fetch signals
-  signal s_CurrentPC, s_NextPC, s_PCplus4, s_PCOut : std_logic_vector (31 downto 0);
+  -----------------------------------------------------------------------------
+  -- END OLD
+  -----------------------------------------------------------------------------
+
+  
+  -----------------------------------------------------------------------------
+  -- NEW, DO NOT DELETE
+  -----------------------------------------------------------------------------
+  -- Control signals
+  signal s_MemDataLength, s_MemDataSigned : std_logic;
+  signal s_MemWriteEnable : std_logic;
+  signal s_BranchType : std_logic_vector (2 downto 0);
+  signal s_ALUFunction : std_logic_vector (5 downto 0);
+  signal s_RegWriteDataSource : std_logic_vector (1 downto 0);
+  signal s_ALUInputBSource : std_logic;
+  signal s_RegWriteEnable : std_logic;
+  signal s_RtReadAddrSource : std_logic;
+  
+
+  
+  
+  -- Instruction Fetch signals
+  signal s_CurrentPC, s_NextPC, s_PCplus4          : std_logic_vector (31 downto 0);
   signal s_Instruction, s_JumpAddrShifted          : std_logic_vector (31 downto 0);
+  signal s_JumpAddrExtended : std_logic_vector (31 downto 0);
   signal s_BranchOffsetShifted, s_BranchAddress    : std_logic_vector (31 downto 0);
   signal s_SignExtImmOrAddr                        : std_logic_vector (31 downto 0);
+  signal s_JumpAddress                             : std_logic_vector (31 downto 0);
+  signal s_JumpRegAddress                          : std_logic_vector (31 downto 0);
+  signal s_BranchDecisionAddr                      : std_logic_vector (31 downto 0);
+  signal s_NextPCSource                      : std_logic_vector (1 downto 0);
 
--- Instruction aliases
-  -- checkout MIPS instruction formats (p. 120)                    
+
+  -- Branch Control Signals
+  signal s_BranchDecision : std_logic;
+  signal s_BranchDecisionAddress : std_logic_vector (31 downto 0);  
+  
+  
+  -- Instruction aliases
   alias a_Opcode     : std_logic_vector (5 downto 0) is s_Instruction(31 downto 26);
   alias a_Rs         : std_logic_vector (4 downto 0) is s_Instruction (25 downto 21);
   alias a_Rt         : std_logic_vector (4 downto 0) is s_Instruction (20 downto 16);
@@ -185,24 +216,30 @@ end component branch_control;
   alias a_JumpAddr   : std_logic_vector (25 downto 0) is s_Instruction (25 downto 0);
 
 
+  -- Data Memory signals
+  signal s_MemReadData : std_logic_vector (31 downto 0);
+
+
+  -- ALU signals
+  signal s_ALUInputB, s_ALUResult : std_logic_vector (31 downto 0);
+  signal s_ALUFlagZero : std_logic;
+  
+  
   -- Register File signals
+  signal s_RtReadAddr : std_logic_vector (4 downto 0);
   signal s_RsReadData, s_RtReadData : std_logic_vector (31 downto 0);
-  signal s_RegWriteAddr             : std_logic_vector (31 downto 0);
+  signal s_RegWriteAddr             : std_logic_vector (4 downto 0);
+  signal s_RegWriteData : std_logic_vector (31 downto 0);
   signal s_RegWriteAddrSource       : std_logic_vector (1 downto 0);
 
+  signal s_UpperImm : std_logic_vector (31 downto 0);
 
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
--- Architecture DEFINITION HERE
------------------------------------------------------------------------------
------------------------------------------------------------------------------
------------------------------------------------------------------------------
-begin  -- architecture mixed
+begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
-  -----------------------------------------------------------------------------
+
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Main Control
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   
   main_control : mips_control
     port map (
@@ -223,9 +260,9 @@ begin  -- architecture mixed
       o_Jump            => s_Jump,
       o_BranchEnable    => s_BranchEnable);
 
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Instruction Fetch Logic
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
   pc_plus_4_adder : fan
     port map (
@@ -261,9 +298,11 @@ begin  -- architecture mixed
       i_clk   => i_clk);
 
 
+  s_JumpAddrExtended <= "000000" & a_JumpAddr;
+
   shifter_JumpAddr : n_shifter
     port map (
-      i_A   => a_JumpAddr,
+      i_A   => s_JumpAddrExtended,
       i_In  => '0',
       i_Sel => '1',
       o_F   => s_JumpAddrShifted);
@@ -283,6 +322,7 @@ begin  -- architecture mixed
 
 
   s_JumpAddress    <= s_PCplus4(31 downto 28) & s_JumpAddrShifted;
+
   s_JumpRegAddress <= s_RsReadData;
 
   -----------------------------------------------------------------------------
@@ -291,30 +331,26 @@ begin  -- architecture mixed
   -- Select next program counter source
   --
   -- 00 = PC+4
-  -- 01 = BranchAddress
-  -- 10 = JumpAddress
-  -- 11 = JumpRegAddress
+  -- 01 = JumpAddress
+  -- 10 = JumpRegAddress
+  -- 11 = BranchDecisionAddress
   -----------------------------------------------------------------------------
   with s_NextPCSource select
     s_NextPC <=
-    s_PCplus4        when "00",
-    s_BranchAddress  when "01",
-    s_JumpAddress    when "10",
-    s_JumpRegAddress when "11",
-    X"00000000"      when others;       -- should never happen
+    s_PCplus4               when "00",
+    s_JumpAddress           when "01",
+    s_JumpRegAddress        when "10",
+    s_BranchDecisionAddress when "11",
+    X"00000000"             when others;  -- should never happen
 
 
 
 
 
 
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Register File
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
   -----------------------------------------------------------------------------
   -- s_RegWriteAddrSource mux
@@ -322,15 +358,27 @@ begin  -- architecture mixed
   -- chooses the write address for the register file
   -- 00 = Rd
   -- 01 = Rt
-  -- 1X = $ra (for linking)
+  -- 10 = $ra (for linking)
+  -- 11 = $zero or $ra (for branch linking)
   -----------------------------------------------------------------------------
   with s_RegWriteAddrSource select
     s_RegWriteAddr <=
-    a_Rd    when "00",
-    a_Rt    when "01",
-    "11111" when "1-",                  -- $ra for linking
-    "00000" when others;                -- should never happen
+    a_Rd                         when "00",
+    a_Rt                         when "01",
+    "11111"                      when "10",  -- $ra for linking
+    (others => s_BranchDecision) when "11",  -- $zero or $ra for branch linking
+    "00000"                      when others;  -- should never happen
 
+
+  
+  shifter_upper_imm : n_shifter
+    generic map (
+      n => 16)
+    port map (
+      i_A   => s_SignExtImmOrAddr,
+      i_In  => '0',
+      i_Sel => '1',
+      o_F   => s_UpperImm);
 
   -----------------------------------------------------------------------------
   -- s_RegWriteDataSource mux
@@ -338,13 +386,15 @@ begin  -- architecture mixed
   -- chooses the write data for the register file
   -- 00 = ALU Result
   -- 01 = Memory Data Read
-  -- 1X = PC+4 (for linking)
+  -- 10 = Upper Immediate (LUI)
+  -- 11 = PC+4 (for linking)
   -----------------------------------------------------------------------------
   with s_RegWriteDataSource select
     s_RegWriteData <=
     s_ALUResult   when "00",
     s_MemReadData when "01",
-    s_PCplus4     when "1-",
+    s_UpperImm     when "10",
+    s_PCplus4    when "11",
     X"00000000"   when others;          -- should never happen
 
 
@@ -357,6 +407,7 @@ begin  -- architecture mixed
   -----------------------------------------------------------------------------
   s_RtReadAddr <= a_Rt when s_RtReadAddrSource = '0' else "00000";
 
+  
   register_file : mips_regfile
     port map(
       i_raddr1  => a_Rs,
@@ -370,24 +421,11 @@ begin  -- architecture mixed
       o_rdata2  => s_RtReadData);
 
 
-  -----------------------------------------------------------------------------
-  -- ALU Control
-  -----------------------------------------------------------------------------
 
-  -- we need to discuss the implementation of this
-
-
-
-
-
-
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
-  -----------------------------------------------------------------------------
+  
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- ALU
-  -----------------------------------------------------------------------------
-
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -----------------------------------------------------------------------------
   -- s_ALUInputBSource mux
   -----------------------------------------------------------------------------
@@ -397,38 +435,21 @@ begin  -- architecture mixed
   -----------------------------------------------------------------------------
   s_ALUInputB <= s_RtReadData when s_ALUInputBSource = '0' else s_SignExtImmOrAddr;
 
-
-  -----------------------------------------------------------------------------
-  -- s_ALUShiftAmountSource mux
-  -----------------------------------------------------------------------------
-  -- chooses between different sources of shift amount
-  -- 00 = Shift amount from the instruction
-  -- 01 = Shift amount from register (variable shift)
-  -- 1- = Shift amount by constant 16 (used for LUI)
-  -----------------------------------------------------------------------------
-  with s_ALUShiftAmountSource select
-    s_ALUShiftAmount <=
-    a_Shamt                  when "00",
-    s_RsReadData(4 downto 0) when "01",
-    "10000"                  when "1-",
-    "00000"                  when others;  -- should never happen
-  
   alu : mips_alu
     port map (
       i_A           => s_RsReadData,
       i_B           => s_ALUInputB,
       o_R           => s_ALUResult,
-      i_ShiftAmount => s_ALUShiftAmountSource,
-      i_Function    => s_ALUControlFunctOutput,  -- need to create this signal
-                                                 -- in ALU Control
-      o_ZeroFlag    => s_ALUZeroFlag);
+      i_ShiftAmount => a_Shamt,
+      i_Function    => s_ALUFunction,
+      o_ZeroFlag    => s_ALUFlagZero);
 
 
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Branch Control
-  -----------------------------------------------------------------------------
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-  branch_ctl: branch_control
+  branch_ctl : branch_control
     port map (
       i_BranchType     => s_BranchType,
       i_ALUFlagZero    => s_ALUFlagZero,
@@ -436,8 +457,19 @@ begin  -- architecture mixed
       o_BranchDecision => s_BranchDecision);
 
   -----------------------------------------------------------------------------
-  -- Data Memory
+  -- BranchDecisionAddress mux
   -----------------------------------------------------------------------------
+  -- 0 = PC+4
+  -- 1 = BranchAddress
+  -----------------------------------------------------------------------------
+  s_BranchDecisionAddress <= s_PCplus4 when s_BranchDecision = '0' else s_BranchAddress;
+
+
+
+
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  -- Data Memory
+  --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
   data_memory : mips_mem
     port map(

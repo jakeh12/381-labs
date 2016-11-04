@@ -7,7 +7,7 @@ entity branch_control is
   port (
     i_BranchType                : in  std_logic_vector (2 downto 0);
     i_ALUFlagZero, i_ALUFlagNeg : in  std_logic;
-    o_BranchDecision            : out std_logic_vector);
+    o_BranchDecision            : out std_logic);
 
 end entity branch_control;
 -------------------------------------------------------------------------------
