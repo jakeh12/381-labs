@@ -8,7 +8,11 @@ addi $s0, $zero, 1
 nop #test add
 add $t2, $t0, $t1 # $t2 = 1
 nop
+addu $t2, $t0, $t1 # $t2 = 1
+nop
 sub $t2, $t0, $t1 # $t2 = 3
+nop
+subu $t2, $t0, $t1 # $t2 = 3
 nop
 and $t2, $t2, $t0 # $t2 = 2
 nop
