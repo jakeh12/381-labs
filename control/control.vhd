@@ -27,7 +27,10 @@ end entity mips_control;
 -------------------------------------------------------------------------------
 architecture rom of mips_control is
 
-  type rom_t is std_logic_vector(20 downto 0); --the size of all output bits
+	--roms
+  type rom_rtype is std_logic_vector(23 downto 0); --the size of all output bits
+  type rom_branch is std_logic_vector(23 downto 0); --the size of all output bits
+  type rom_other is std_logic_vector(23 downto 0); --the size of all output bits
 
   -- checkout MIPS instruction formats (p. 120)
   alias a_op             : std_logic_vector (5 downto 0) is i_instruction(31 downto 26);
@@ -114,72 +117,137 @@ architecture rom of mips_control is
   constant BRANCH_BLTZAL : std_logic_vector (5 downto 0) := "10000";
   constant BRANCH_BGEZAL : std_logic_vector (5 downto 0) := "10001";
 
-signal rom : rom_t := (
 
-	OP_MUL		=> "10010----0---000---000",
-	OP_ADD		=> "10010----0---000---000",
-	OP_ADDU		=> "10010----0---000---000",
-	OP_SUB		=> "10010----0---000---000",
-	OP_SUBU		=> "10010----0---000---000",
-	OP_ADDI		=> "0001100010---000---000",
-	OP_ADDIU	=> "0001100100---000---000",
-	OP_OR		=> "10010----0---000---000",
-	OP_ORI		=> "0001100110---000---000",
-	OP_AND 		=> "10010----0---000---000",
-	OP_ANDI		=> "0001101000---000---000",
-	OP_XOR		=> "10010----0---000---000",
-	OP_XORI		=> "0001101010---000---000",
-	OP_NOR		=> "10010----0---000---000",
-	OP_SLT		=> "10010----0---000---000",
-	OP_SLTU		=> "10010----0---000---000",
-	OP_SLTI		=> "0001101100---000---000",
-	OP_SLTIU	=> "0001101110---000---000",
-	OP_BEQ		=> "00000----0---000001001",
-	OP_BNE		=> "00000----0---000010001",
-	OP_BLTZ		=> "00000----0---000000001",
-	OP_BGEZ		=> "00100----0---000000001",
-	OP_BLTZAL	=> "00100----0---000000001",
-	OP_BGEZAL	=> "00100----0---000000001",
-	OP_BLEZ		=> "00100----0---000011001",
-	OP_BGTZ 	=> "00100----0---000100001",
-	OP_J		=> "00000----0---000---000",
-	OP_JAL		=> "11010----0---000---010",
-	OP_JR		=> "00000----0---000---100",
-	OP_JALR		=> "01010----0---000---100",
-	OP_LB		=> "00010----0110001---000",
-	OP_LBU		=> "00010----0010001---000",
-	OP_LH		=> "00010----0101001---000",
-	OP_LHU		=> "00010----0001001---000",
-	OP_LW		=> "00010----0100001---000",
-	OP_SB		=> "00010----1---000---000",
-	OP_SH		=> "00010----1---000---000",
-	OP_SW		=> "00010----1---000---000",
-	OP_SLL		=> "10010----0---000---000",
-	OP_SRL		=> "10010----0---000---000",
-	OP_SRA		=> "10010----0---000---000",
-	OP_SLLV		=> "10010----0---000---000",
-	OP_SRLV		=> "10010----0---000---000",
-	OP_SRAV		=> "10010----0---000---000",
-	OP_LUI		=> "0001110000---110---000",
+signal rom_r : rom_rtype := (
+	to_integer(unsigned(FUNC_JALR)) => "10100000-------10001100", --JALR
+	others => "10" & a_funct & "-------00000000"
+);
+
+signal rom_b : rom_branch := (
+	to_integer(unsigned(BRANCH_BLTZ)) => "00100010010---11----10",
+	to_integer(unsigned(BRANCH_BGEZ)) => "00100010011---11----10",
+	to_integer(unsigned(BRANCH_BLTZAL)) => "10100010010---11111110",
+	to_integer(unsigned(BRANCH_BGEZAL)) => "10100010011---11111110"
+);
+
+signal rom_o : rom_other := (
+	to_integer(unsigned(OP_ADDI)) => "10100000------00010001",
+	to_integer(unsigned(OP_ADDIU)) => "10100001------00010001",
+	to_integer(unsigned(OP_ORI)) => "10100101------00010001",
+	to_integer(unsigned(OP_ANDI)) => "10001101------00010001",
+	to_integer(unsigned(OP_XORI)) => "10100110------00010001",
+	to_integer(unsigned(OP_SLTI)) => "10101010------00010001",
+	to_integer(unsigned(OP_SLTIU)) => "10101001------00010001",
+	to_integer(unsigned(OP_J)) => "00------------01------",
+	to_integer(unsigned(OP_JAL)) => "10------------01101100",
+	to_integer(unsigned(OP_JR)) => "00------------10-----0",
+	to_integer(unsigned(OP_JALR)) => "10100000------10001100",
+	to_integer(unsigned(OP_LB)) => "10100000---10100010101",
+	to_integer(unsigned(OP_LBU)) => "10100000---10000010101",
+	to_integer(unsigned(OP_LH)) => "10100000---01100010101",
+	to_integer(unsigned(OP_LHU)) => "10100000---01000010101",
+	to_integer(unsigned(OP_LW)) => "10100000---00100010101",
+	to_integer(unsigned(OP_SB)) => "01100000---10-00----01",
+	to_integer(unsigned(OP_SH)) => "01100000---01-00----01",
+	to_integer(unsigned(OP_SW)) => "01100000---00-00----01",
+	to_integer(unsigned(OP_LUI)) => "10------------000110-1"
 )
+
 
 begin
 
-   (o_RdIsDest,      
-    o_Link,    
-    o_RtIsForceZero,
-    o_RegWrite,
-    o_ImmToAluB,
-    o_AluOp,
-    o_MemWrite,
-    o_MemSigned,
-    o_MemDataSize,
-    o_ShamSrc,
-    o_RegWriteForce,
-    o_BranchOp,
-    o_JumpReg,
-    o_Jump,
-    o_BranchEnable)
-    <= rom(i_opcode);
+	--if op == 0 use rom_r
+	--else if op == 1 use rom_b
+	--else use rom_o
+
+	if (a_op = "000000") then
+
+   (
+    o_RegWriteEnable,      
+    o_MemWriteEnable,    
+    o_ALUFuntion(0),
+    o_ALUFuntion(1),
+    o_ALUFuntion(2),
+    o_ALUFuntion(3),
+    o_ALUFuntion(4),
+    o_ALUFuntion(5),
+    o_BranchType(0),
+    o_BranchType(1),
+    o_BranchType(2),
+    o_BranchType(3),
+    o_MemDataLength(0),
+    o_MemDataLength(1),
+    o_MemDataSigned,
+    o_NextPCSource(0),
+    o_NextPCSource(1),
+    o_RegWriteAddrSource(0),
+    o_RegWriteAddrSource(1),
+    o_RegWriteDataSource(0),
+    o_RegWriteDataSource(1),
+    o_ReadAddrSource,
+    o_ALUInputBSource,
+    )
+    <= rom_r(to_integer(unsigned i_opcode)));
+
+    elseif (a_op = "000001") then
+
+   (
+    o_RegWriteEnable,      
+    o_MemWriteEnable,    
+    o_ALUFuntion(0),
+    o_ALUFuntion(1),
+    o_ALUFuntion(2),
+    o_ALUFuntion(3),
+    o_ALUFuntion(4),
+    o_ALUFuntion(5),
+    o_BranchType(0),
+    o_BranchType(1),
+    o_BranchType(2),
+    o_BranchType(3),
+    o_MemDataLength(0),
+    o_MemDataLength(1),
+    o_MemDataSigned,
+    o_NextPCSource(0),
+    o_NextPCSource(1),
+    o_RegWriteAddrSource(0),
+    o_RegWriteAddrSource(1),
+    o_RegWriteDataSource(0),
+    o_RegWriteDataSource(1),
+    o_ReadAddrSource,
+    o_ALUInputBSource,
+    )
+    <= rom_b(to_integer(unsigned (a_rt)));
+
+    else
+
+   (
+    o_RegWriteEnable,      
+    o_MemWriteEnable,    
+    o_ALUFuntion(0),
+    o_ALUFuntion(1),
+    o_ALUFuntion(2),
+    o_ALUFuntion(3),
+    o_ALUFuntion(4),
+    o_ALUFuntion(5),
+    o_BranchType(0),
+    o_BranchType(1),
+    o_BranchType(2),
+    o_BranchType(3),
+    o_MemDataLength(0),
+    o_MemDataLength(1),
+    o_MemDataSigned,
+    o_NextPCSource(0),
+    o_NextPCSource(1),
+    o_RegWriteAddrSource(0),
+    o_RegWriteAddrSource(1),
+    o_RegWriteDataSource(0),
+    o_RegWriteDataSource(1),
+    o_ReadAddrSource,
+    o_ALUInputBSource,
+    )
+    <= rom_o(to_integer(unsigned (i_opcode)));
+    end if;
+
+
 
 end rom;
