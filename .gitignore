@@ -1,4 +1,7 @@
 *
+!*.jpg
+!*/*.jpg
+!*/*/*.jpg
 !*.md
 !*.vhd
 !.gitignore
