@@ -1,4 +1,6 @@
 *
+!testing/*.asm
+!testing/*.mif
 !*.jpg
 !*/*.jpg
 !*/*/*.jpg
