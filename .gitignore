@@ -1,4 +1,6 @@
 *
+!*.mif
+!*/*.mif
 !*.gtkw
 !testing/*.asm
 !testing/*.mif
