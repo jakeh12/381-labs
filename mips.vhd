@@ -124,38 +124,35 @@ architecture mixed of mips is
   -- Main control
   component mips_control is
     port (
-    i_instruction 	: in std_logic_vector (31 downto 0);  -- instruction from the memory
-    o_RegWriteEnable	: out std_logic;
-	o_MemWriteEnable: out std_logic;
-	o_ALUFunction	: out std_logic_vector(5 downto 0);
-	o_BranchType	: out std_logic_vector(2 downto 0);
-	o_MemDatatLength: out std_logic_vector(1 downto 0);
-	o_MemDataSigned	: out std_logic;
-	o_NextPCSource	: out std_logic_vector(1 downto 0);
-	o_RegWriteAddrSource 	: out std_logic_vector(1 downto 0);
-	o_RegWriteDataSource 	: out std_logic_vector(1 downto 0);
-	o_RtReadAddrSource 	: out std_logic;
-	o_ALUInputBSource	: out std_logic;
-    );
-
-
+      i_instruction        : in  std_logic_vector (31 downto 0);
+      o_RegWriteEnable     : out std_logic;
+      o_MemWriteEnable     : out std_logic;
+      o_ALUFunction        : out std_logic_vector(5 downto 0);
+      o_BranchType         : out std_logic_vector(2 downto 0);
+      o_MemDataLength     : out std_logic_vector(1 downto 0);
+      o_MemDataSigned      : out std_logic;
+      o_NextPCSource       : out std_logic_vector(1 downto 0);
+      o_RegWriteAddrSource : out std_logic_vector(1 downto 0);
+      o_RegWriteDataSource : out std_logic_vector(1 downto 0);
+      o_RtReadAddrSource   : out std_logic;
+      o_ALUInputBSource    : out std_logic);
   end component mips_control;
 
   -- Control signals
-signal s_RegWriteEnable	: out std_logic;
-signal s_MemWriteEnable : out std_logic;
-signal s_ALUFunction	: out std_logic_vector(5 downto 0);
-signal 	s_BranchType	: out std_logic_vector(2 downto 0);
-signal 	s_MemDatatLength: out std_logic_vector(1 downto 0);
-signal 	s_MemDataSigned	: out std_logic;
-signal 	s_NextPCSource	: out std_logic_vector(1 downto 0);
-signal 	s_RegWriteAddrSource 	: out std_logic_vector(1 downto 0);
-signal 	s_RegWriteDataSource 	: out std_logic_vector(1 downto 0);
-signal 	s_RtReadAddrSource 	: out std_logic;
-signal 	s_ALUInputBSource	: out std_logic;
+  signal s_RegWriteEnable     : std_logic;
+  signal s_MemWriteEnable     : std_logic;
+  signal s_ALUFunction        : std_logic_vector(5 downto 0);
+  signal s_BranchType         : std_logic_vector(2 downto 0);
+  signal s_MemDataLength     : std_logic_vector(1 downto 0);
+  signal s_MemDataSigned      : std_logic;
+  signal s_NextPCSource       : std_logic_vector(1 downto 0);
+  signal s_RegWriteAddrSource : std_logic_vector(1 downto 0);
+  signal s_RegWriteDataSource : std_logic_vector(1 downto 0);
+  signal s_RtReadAddrSource   : std_logic;
+  signal s_ALUInputBSource    : std_logic;
 
 
-  
+
   -----------------------------------------------------------------------------
   -- NEW, DO NOT DELETE
   -----------------------------------------------------------------------------
@@ -168,27 +165,27 @@ signal 	s_ALUInputBSource	: out std_logic;
   --signal s_ALUInputBSource : std_logic;
   --signal s_RegWriteEnable : std_logic;
   --signal s_RtReadAddrSource : std_logic;
-  
 
-  
-  
+
+
+
   -- Instruction Fetch signals
-  signal s_CurrentPC, s_NextPC, s_PCplus4          : std_logic_vector (31 downto 0);
-  signal s_Instruction, s_JumpAddrShifted          : std_logic_vector (31 downto 0);
-  signal s_JumpAddrExtended : std_logic_vector (31 downto 0);
-  signal s_BranchOffsetShifted, s_BranchAddress    : std_logic_vector (31 downto 0);
-  signal s_SignExtImmOrAddr                        : std_logic_vector (31 downto 0);
-  signal s_JumpAddress                             : std_logic_vector (31 downto 0);
-  signal s_JumpRegAddress                          : std_logic_vector (31 downto 0);
-  signal s_BranchDecisionAddr                      : std_logic_vector (31 downto 0);
-  signal s_NextPCSource                      : std_logic_vector (1 downto 0);
+  signal s_CurrentPC, s_NextPC, s_PCplus4       : std_logic_vector (31 downto 0);
+  signal s_Instruction, s_JumpAddrShifted       : std_logic_vector (31 downto 0);
+  signal s_JumpAddrExtended                     : std_logic_vector (31 downto 0);
+  signal s_BranchOffsetShifted, s_BranchAddress : std_logic_vector (31 downto 0);
+  signal s_SignExtImmOrAddr                     : std_logic_vector (31 downto 0);
+  signal s_JumpAddress                          : std_logic_vector (31 downto 0);
+  signal s_JumpRegAddress                       : std_logic_vector (31 downto 0);
+  signal s_BranchDecisionAddr                   : std_logic_vector (31 downto 0);
+  --signal s_NextPCSource                         : std_logic_vector (1 downto 0);
 
 
   -- Branch Control Signals
-  signal s_BranchDecision : std_logic;
-  signal s_BranchDecisionAddress : std_logic_vector (31 downto 0);  
-  
-  
+  signal s_BranchDecision        : std_logic;
+  signal s_BranchDecisionAddress : std_logic_vector (31 downto 0);
+
+
   -- Instruction aliases
   alias a_Opcode     : std_logic_vector (5 downto 0) is s_Instruction(31 downto 26);
   alias a_Rs         : std_logic_vector (4 downto 0) is s_Instruction (25 downto 21);
@@ -207,15 +204,15 @@ signal 	s_ALUInputBSource	: out std_logic;
 
   -- ALU signals
   signal s_ALUInputB, s_ALUResult : std_logic_vector (31 downto 0);
-  signal s_ALUFlagZero : std_logic;
-  
-  
+  signal s_ALUFlagZero            : std_logic;
+
+
   -- Register File signals
-  signal s_RtReadAddr : std_logic_vector (4 downto 0);
+  signal s_RtReadAddr               : std_logic_vector (4 downto 0);
   signal s_RsReadData, s_RtReadData : std_logic_vector (31 downto 0);
   signal s_RegWriteAddr             : std_logic_vector (4 downto 0);
-  signal s_RegWriteData : std_logic_vector (31 downto 0);
-  signal s_RegWriteAddrSource       : std_logic_vector (1 downto 0);
+  signal s_RegWriteData             : std_logic_vector (31 downto 0);
+  --signal s_RegWriteAddrSource       : std_logic_vector (1 downto 0);
 
   signal s_UpperImm : std_logic_vector (31 downto 0);
 
@@ -226,24 +223,24 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- Main Control
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   
-  main_control : mips_control
-    port map (
-      i_instruction     => s_Instruction,
-      o_RdIsDest        => s_RdIsDest,
-      o_Link            => s_Link,
-      o_RtIsForceZero   => s_RtIsForceZero,
-      o_RegWrite        => s_RegWrite,
-      o_ImmToAluB       => s_ImmToAluB,
-      o_AluOp           => s_AluOp,
-      o_MemWrite        => s_MemWrite,
-      o_MemSigned       => s_MemSigned,
-      o_MemDataSize     => s_MemDataSize,
-      o_ShamSrc         => s_ShamSrc,
-      o_RegWriteFromMem => s_RegWriteFromMem,
-      o_BranchOp        => s_BranchOp,
-      o_JumpReg         => s_JumpReg,
-      o_Jump            => s_Jump,
-      o_BranchEnable    => s_BranchEnable);
+--  main_control : mips_control
+--    port map (
+--      i_instruction     => s_Instruction,
+--      o_RdIsDest        => s_RdIsDest,
+--      o_Link            => s_Link,
+--      o_RtIsForceZero   => s_RtIsForceZero,
+--      o_RegWrite        => s_RegWrite,
+--      o_ImmToAluB       => s_ImmToAluB,
+--      o_AluOp           => s_AluOp,
+--      o_MemWrite        => s_MemWrite,
+--      o_MemSigned       => s_MemSigned,
+--      o_MemDataSize     => s_MemDataSize,
+--      o_ShamSrc         => s_ShamSrc,
+--      o_RegWriteFromMem => s_RegWriteFromMem,
+--     o_BranchOp        => s_BranchOp,
+--      o_JumpReg         => s_JumpReg,
+--      o_Jump            => s_Jump,
+--     o_BranchEnable    => s_BranchEnable);
 
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Instruction Fetch Logic
@@ -306,7 +303,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_F   => s_BranchOffsetShifted);
 
 
-  s_JumpAddress    <= s_PCplus4(31 downto 28) & s_JumpAddrShifted;
+  s_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted;
 
   s_JumpRegAddress <= s_RsReadData;
 
@@ -378,8 +375,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
     s_RegWriteData <=
     s_ALUResult   when "00",
     s_MemReadData when "01",
-    s_UpperImm     when "10",
-    s_PCplus4    when "11",
+    s_UpperImm    when "10",
+    s_PCplus4     when "11",
     X"00000000"   when others;          -- should never happen
 
 
@@ -392,7 +389,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   s_RtReadAddr <= a_Rt when s_RtReadAddrSource = '0' else "00000";
 
-  
+
   register_file : mips_regfile
     port map(
       i_raddr1  => a_Rs,
@@ -407,7 +404,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  
+
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- ALU
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
