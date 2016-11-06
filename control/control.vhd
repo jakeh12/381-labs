@@ -117,16 +117,8 @@ architecture rom of mips_control is
 
   type rom_array is array (63 downto 0) of std_logic_vector(21 downto 0);  
 
-  -- opcode to integer function
-  impure function oti(opcode : std_logic_vector(5 downto 0)) return natural is
-    variable result : natural;
-  begin
-    result := to_integer(unsigned(opcode));
-    return result;
-  end function;
-  
---signal dummy : integer := 61;
---R Type ROM
+  --signal dummy : integer := 61;
+  --R Type ROM
   signal rom_r : rom_array := (
     to_integer(unsigned(FUNC_JALR)) => "10100000------10001100",
     others                          => ("10" & a_funct & "-------00000000")
