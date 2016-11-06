@@ -8,7 +8,7 @@ entity mips_alu is
     i_B           : in  std_logic_vector (31 downto 0);
     o_R           : out std_logic_vector (31 downto 0);
     i_ShiftAmount : in  std_logic_vector (4 downto 0);
-    i_Function    : in std_logic_vector (5 downto 0);
+    i_Function    : in  std_logic_vector (5 downto 0);
     o_ZeroFlag    : out std_logic);
 end entity mips_alu;
 -------------------------------------------------------------------------------
@@ -33,21 +33,21 @@ architecture structural of mips_alu is
   end component;
 
   signal s_isUnsignedSet, s_CarryIn, s_PassCarryIn, s_InvertA, s_InvertB : std_logic;
-  signal s_Operation : std_logic_vector (1 downto 0);
-  alias a_ShiftAmountVar : std_logic_vector (4 downto 0) is i_A (4 downto 0);
+  signal s_Operation                                                     : std_logic_vector (1 downto 0);
+  alias a_ShiftAmountVar                                                 : std_logic_vector (4 downto 0) is i_A (4 downto 0);
 
   component mips_shifter is
-      port (
-       i_A      : in  std_logic_vector (31 downto 0);
-       i_ShAmt  : in  std_logic_vector (4 downto 0);
-       i_ShDir  : in  std_logic;
-       i_ShType : in  std_logic;
-       o_F      : out std_logic_vector(31 downto 0));
+    port (
+      i_A      : in  std_logic_vector (31 downto 0);
+      i_ShAmt  : in  std_logic_vector (4 downto 0);
+      i_ShDir  : in  std_logic;
+      i_ShType : in  std_logic;
+      o_F      : out std_logic_vector(31 downto 0));
   end component;
 
   signal s_ShiftDirection : std_logic;
-  signal s_ShiftType : std_logic;
-  
+  signal s_ShiftType      : std_logic;
+
   component mips_multiplier is
     port (
       i_A : in  std_logic_vector (31 downto 0);  -- multiplicant                                                                                            
@@ -72,20 +72,20 @@ architecture structural of mips_alu is
   constant FUNC_SLL  : std_logic_vector (5 downto 0) := "000000";
   constant FUNC_SRL  : std_logic_vector (5 downto 0) := "000010";
   constant FUNC_SRA  : std_logic_vector (5 downto 0) := "000011";
-  constant FUNC_SLLV  : std_logic_vector (5 downto 0) := "000100";
-  constant FUNC_SRLV  : std_logic_vector (5 downto 0) := "000110";
-  constant FUNC_SRAV  : std_logic_vector (5 downto 0) := "000111";
+  constant FUNC_SLLV : std_logic_vector (5 downto 0) := "000100";
+  constant FUNC_SRLV : std_logic_vector (5 downto 0) := "000110";
+  constant FUNC_SRAV : std_logic_vector (5 downto 0) := "000111";
 
-  
-  signal s_ResultALU : std_logic_vector (31 downto 0);
-  signal s_ResultMultiplier: std_logic_vector (31 downto 0);
-  signal s_ResultShifter : std_logic_vector (31 downto 0);
+
+  signal s_ResultALU        : std_logic_vector (31 downto 0);
+  signal s_ResultMultiplier : std_logic_vector (31 downto 0);
+  signal s_ResultShifter    : std_logic_vector (31 downto 0);
 
   signal s_ShiftAmount : std_logic_vector (4 downto 0);
   
 begin  -- architecture structural
 
-  alu: alu32bit
+  alu : alu32bit
     port map (
       i_A                => i_A,
       i_B                => i_B,
@@ -102,9 +102,12 @@ begin  -- architecture structural
       o_ZeroFlag         => o_ZeroFlag);
 
 
-  s_ShiftAmount <= i_ShiftAmount when i_Function = FUNC_SLL | FUNC_SRL | FUNC_SRA else a_ShiftAmountVar;
+  with i_Function select
+    s_ShiftAmount <=
+    i_ShiftAmount    when FUNC_SLL | FUNC_SRL | FUNC_SRA,
+    a_ShiftAmountVar when others;
 
-  shifter: mips_shifter
+  shifter : mips_shifter
     port map (
       i_A      => i_B,
       i_Shamt  => s_ShiftAmount,
@@ -113,7 +116,7 @@ begin  -- architecture structural
       o_F      => s_ResultShifter);
 
   
-  multiplier: mips_multiplier
+  multiplier : mips_multiplier
     port map (
       i_A => i_A,
       i_B => i_B,
@@ -123,10 +126,10 @@ begin  -- architecture structural
 
   with i_Function select
     o_R <=
-    s_ResultALU when FUNC_ADD | FUNC_ADDU | FUNC_SUB | FUNC_SUBU | FUNC_OR | FUNC_AND | FUNC_XOR | FUNC_NOR | FUNC_SLT | FUNC_SLTU,
+    s_ResultALU        when FUNC_ADD | FUNC_ADDU | FUNC_SUB | FUNC_SUBU | FUNC_OR | FUNC_AND | FUNC_XOR | FUNC_NOR | FUNC_SLT | FUNC_SLTU,
     s_ResultMultiplier when FUNC_MUL,
-    s_ResultShifter when FUNC_SLL | FUNC_SRL | FUNC_SRA | FUNC_SLLV | FUNC_SRLV | FUNC_SRAV,
-    X"00000000" when others;
+    s_ResultShifter    when FUNC_SLL | FUNC_SRL | FUNC_SRA | FUNC_SLLV | FUNC_SRLV | FUNC_SRAV,
+    X"00000000"        when others;
 
   
   with i_Function select

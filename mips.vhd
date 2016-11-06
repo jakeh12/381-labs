@@ -5,8 +5,7 @@ use ieee.std_logic_1164.all;
 entity mips is
   generic(
     program_file : string := "prog.mif");
-  port (
-    i_clk : in std_logic;
+  port (    i_clk : in std_logic;
     i_rst : in std_logic);
 end entity mips;
 -------------------------------------------------------------------------------
@@ -303,7 +302,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_F   => s_BranchOffsetShifted);
 
 
-  s_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted;
+  s_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);
 
   s_JumpRegAddress <= s_RsReadData;
 
@@ -355,7 +354,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   
   shifter_upper_imm : n_shifter
     generic map (
-      n => 16)
+      n => 4)
     port map (
       i_A   => s_SignExtImmOrAddr,
       i_In  => '0',
