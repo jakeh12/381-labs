@@ -115,12 +115,11 @@ architecture rom of mips_control is
   constant BRANCH_BGEZAL : std_logic_vector (5 downto 0) := "010001";
 
 
-  type rom_array is array (63 downto 0) of std_logic_vector(23 downto 0);
-
+  type rom_array is array (63 downto 0) of std_logic_vector(23 downto 0);  
 
 --R Type ROM
   signal rom_r : rom_array := (
-    to_integer(unsigned(FUNC_JALR)) => "10100000-------10001100",
+    to_integer(unsigned(FUNC_JALR) => "10100000-------10001100",
     others                          => "10" & a_funct & "-------00000000"
     );
 
