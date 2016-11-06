@@ -3,7 +3,7 @@ nop
 nop
 nop
 addi $t0, $zero, -1
-lui $t1, 4100
+lui $t1, 10
 nop
 sw $t0, 0($t1) # Mem[] = -1
 nop

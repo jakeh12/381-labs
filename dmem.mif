@@ -20,6 +20,6 @@ DATA_RADIX = HEX; 	% Enter BIN, DEC, HEX, OCT, or UNS; unless
 CONTENT
 BEGIN
 
-0 : 00000000;		
+0 : 000000AA;		
 
 END;

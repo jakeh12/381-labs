@@ -34,6 +34,8 @@ end entity mem;
 
 architecture behavioral of mem is
 
+	signal signal0,signal1,signal2,signal3 : std_logic_vector(31 downto 0);
+
 	constant MAX_STRING_LENGTH : integer := 200;
 	constant MAX_STRINGS_PER_LIST : integer := 100;
 	constant MEM_DEPTH : integer := 2**depth_exp_of_2;
@@ -876,5 +878,8 @@ begin
 			wait;
 			
 	end process read_mif_file;
-
+signal0 <= mem(0);
+signal1 <= mem(1);
+signal2 <= mem(2);
+signal3 <= mem(3);
 end architecture behavioral;
