@@ -221,25 +221,21 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Main Control
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  
---  main_control : mips_control
---    port map (
---      i_instruction     => s_Instruction,
---      o_RdIsDest        => s_RdIsDest,
---      o_Link            => s_Link,
---      o_RtIsForceZero   => s_RtIsForceZero,
---      o_RegWrite        => s_RegWrite,
---      o_ImmToAluB       => s_ImmToAluB,
---      o_AluOp           => s_AluOp,
---      o_MemWrite        => s_MemWrite,
---      o_MemSigned       => s_MemSigned,
---      o_MemDataSize     => s_MemDataSize,
---      o_ShamSrc         => s_ShamSrc,
---      o_RegWriteFromMem => s_RegWriteFromMem,
---     o_BranchOp        => s_BranchOp,
---      o_JumpReg         => s_JumpReg,
---      o_Jump            => s_Jump,
---     o_BranchEnable    => s_BranchEnable);
+
+  main_control : mips_control 
+    port map(
+      i_instruction        => s_Instruction,
+      o_RegWriteEnable     => s_RegWriteEnable,
+      o_MemWriteEnable     => s_MemWriteEnable,
+      o_ALUFunction        => s_ALUFunction, 
+      o_BranchType         => s_BranchType,
+      o_MemDataLength      => s_MemDataLength,
+      o_MemDataSigned      => s_MemDataSigned,
+      o_NextPCSource       => s_NextPCSource,
+      o_RegWriteAddrSource => s_RegWriteAddrSource,
+      o_RegWriteDataSource => s_RegWriteDataSource,
+      o_RtReadAddrSource   => s_RtReadAddrSource, 
+      o_ALUInputBSource    => s_ALUInputBSource);
 
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Instruction Fetch Logic
