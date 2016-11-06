@@ -6,21 +6,17 @@ entity mips_control is
 
   port (
     i_instruction 	: in std_logic_vector (31 downto 0);  -- instruction from the memory
-    o_RdIsDest      	: out std_logic;      -- COMMENT ME
-    o_Link        	: out std_logic;      --
-    o_RtIsForceZero 	: out std_logic;      --
-    o_RegWrite     	: out std_logic;      --
-    o_ImmToAluB    	: out std_logic;      --
-    o_AluOp       	: out std_logic_vector (2 downto 0);   --
-    o_MemWrite    	: out std_logic;      --
-    o_MemSigned      	: out std_logic;      --
-    o_MemDataSize    	: out std_logic;      --
-    o_ShamSrc		: out std_logic;      --
-    o_RegWriteFromMem 	: out std_logic;      --
-    o_BranchOp 		: out std_logic_vector (1 downto 0);   --
-    o_JumpReg		: out std_logic;      --
-    o_Jump 		: out std_logic;      --
-    o_BranchEnable	: out std_logic	      --
+    o_RegWriteEnable	: out std_logic;
+	o_MemWriteEnable: out std_logic;
+	o_ALUFunction	: out std_logic_vector(5 downto 0);
+	o_BranchType	: out std_logic_vector(2 downto 0);
+	o_MemDatatLength: out std_logic_vector(1 downto 0);
+	o_MemDataSigned	: out std_logic;
+	o_NextPCSource	: out std_logic_vector(1 downto 0);
+	o_RegWriteAddrSource 	: out std_logic_vector(1 downto 0);
+	o_RegWriteDataSource 	: out std_logic_vector(1 downto 0);
+	o_RtReadAddrSource 	: out std_logic;
+	o_ALUInputBSource	: out std_logic;
     );
 
 end entity mips_control;
@@ -118,11 +114,13 @@ architecture rom of mips_control is
   constant BRANCH_BGEZAL : std_logic_vector (5 downto 0) := "10001";
 
 
+--R Type ROM
 signal rom_r : rom_rtype := (
-	to_integer(unsigned(FUNC_JALR)) => "10100000-------10001100", --JALR
+	to_integer(unsigned(FUNC_JALR)) => "10100000-------10001100",
 	others => "10" & a_funct & "-------00000000"
 );
 
+--Branch Type ROM
 signal rom_b : rom_branch := (
 	to_integer(unsigned(BRANCH_BLTZ)) => "00100010010---11----10",
 	to_integer(unsigned(BRANCH_BGEZ)) => "00100010011---11----10",
@@ -130,6 +128,7 @@ signal rom_b : rom_branch := (
 	to_integer(unsigned(BRANCH_BGEZAL)) => "10100010011---11111110"
 );
 
+--All other instructions ROM
 signal rom_o : rom_other := (
 	to_integer(unsigned(OP_ADDI)) => "10100000------00010001",
 	to_integer(unsigned(OP_ADDIU)) => "10100001------00010001",
@@ -155,11 +154,7 @@ signal rom_o : rom_other := (
 
 
 begin
-
-	--if op == 0 use rom_r
-	--else if op == 1 use rom_b
-	--else use rom_o
-
+	--if R type instruction use Rtype rom
 	if (a_op = "000000") then
 
    (
@@ -188,8 +183,9 @@ begin
     o_ALUInputBSource,
     )
     <= rom_r(to_integer(unsigned i_opcode)));
-
-    elseif (a_op = "000001") then
+	
+	--else if instruction is the branch op code use the branch rom
+	else if (a_op = "000001") then
 
    (
     o_RegWriteEnable,      
@@ -218,6 +214,7 @@ begin
     )
     <= rom_b(to_integer(unsigned (a_rt)));
 
+	--else the instruction is one of the misc. instructions, use other rom
     else
 
    (

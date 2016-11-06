@@ -121,68 +121,53 @@ architecture mixed of mips is
       o_rdata  : out std_logic_vector(31 downto 0));
   end component;
 
-
-  -----------------------------------------------------------------------------
-  -- OLD
-  -----------------------------------------------------------------------------
- 
   -- Main control
   component mips_control is
     port (
-      i_instruction     : in  std_logic_vector (31 downto 0);  -- instruction from the memory
-      o_RdIsDest        : out std_logic;                       -- COMMENT ME
-      o_Link            : out std_logic;                       --
-      o_RtIsForceZero   : out std_logic;                       --
-      o_RegWrite        : out std_logic;                       --
-      o_ImmToAluB       : out std_logic;                       --
-      o_AluOp           : out std_logic_vector (2 downto 0);   --
-      o_MemWrite        : out std_logic;                       --
-      o_MemSigned       : out std_logic;                       --
-      o_MemDataSize     : out std_logic;                       --
-      o_ShamSrc         : out std_logic;                       --
-      o_RegWriteFromMem : out std_logic;                       --
-      o_BranchOp        : out std_logic_vector (1 downto 0);   --
-      o_JumpReg         : out std_logic;                       --
-      o_Jump            : out std_logic;                       --
-      o_BranchEnable    : out std_logic                        --
-      );
+    i_instruction 	: in std_logic_vector (31 downto 0);  -- instruction from the memory
+    o_RegWriteEnable	: out std_logic;
+	o_MemWriteEnable: out std_logic;
+	o_ALUFunction	: out std_logic_vector(5 downto 0);
+	o_BranchType	: out std_logic_vector(2 downto 0);
+	o_MemDatatLength: out std_logic_vector(1 downto 0);
+	o_MemDataSigned	: out std_logic;
+	o_NextPCSource	: out std_logic_vector(1 downto 0);
+	o_RegWriteAddrSource 	: out std_logic_vector(1 downto 0);
+	o_RegWriteDataSource 	: out std_logic_vector(1 downto 0);
+	o_RtReadAddrSource 	: out std_logic;
+	o_ALUInputBSource	: out std_logic;
+    );
+
 
   end component mips_control;
 
   -- Control signals
-  signal s_RdIsDest        : std_logic;                      -- COMMENT ME
-  signal s_Link            : std_logic;                      --
-  signal s_RtIsForceZero   : std_logic;                      --
-  signal s_RegWrite        : std_logic;                      --
-  signal s_ImmToAluB       : std_logic;                      --
-  signal s_AluOp           : std_logic_vector (2 downto 0);  --
-  signal s_MemWrite        : std_logic;                      --
-  signal s_MemSigned       : std_logic;                      --
-  signal s_MemDataSize     : std_logic;                      --
-  signal s_ShamSrc         : std_logic;                      --
-  signal s_RegWriteFromMem : std_logic;                      --
-  signal s_BranchOp        : std_logic_vector (1 downto 0);  --
-  signal s_JumpReg         : std_logic;                      --
-  signal s_Jump            : std_logic;                      --
-  signal s_BranchEnable    : std_logic;                      --
+signal s_RegWriteEnable	: out std_logic;
+signal s_MemWriteEnable : out std_logic;
+signal s_ALUFunction	: out std_logic_vector(5 downto 0);
+signal 	s_BranchType	: out std_logic_vector(2 downto 0);
+signal 	s_MemDatatLength: out std_logic_vector(1 downto 0);
+signal 	s_MemDataSigned	: out std_logic;
+signal 	s_NextPCSource	: out std_logic_vector(1 downto 0);
+signal 	s_RegWriteAddrSource 	: out std_logic_vector(1 downto 0);
+signal 	s_RegWriteDataSource 	: out std_logic_vector(1 downto 0);
+signal 	s_RtReadAddrSource 	: out std_logic;
+signal 	s_ALUInputBSource	: out std_logic;
 
-  -----------------------------------------------------------------------------
-  -- END OLD
-  -----------------------------------------------------------------------------
 
   
   -----------------------------------------------------------------------------
   -- NEW, DO NOT DELETE
   -----------------------------------------------------------------------------
   -- Control signals
-  signal s_MemDataLength, s_MemDataSigned : std_logic;
-  signal s_MemWriteEnable : std_logic;
-  signal s_BranchType : std_logic_vector (2 downto 0);
-  signal s_ALUFunction : std_logic_vector (5 downto 0);
-  signal s_RegWriteDataSource : std_logic_vector (1 downto 0);
-  signal s_ALUInputBSource : std_logic;
-  signal s_RegWriteEnable : std_logic;
-  signal s_RtReadAddrSource : std_logic;
+  --signal s_MemDataLength, s_MemDataSigned : std_logic;
+  --signal s_MemWriteEnable : std_logic;
+  --signal s_BranchType : std_logic_vector (2 downto 0);
+  --signal s_ALUFunction : std_logic_vector (5 downto 0);
+  --signal s_RegWriteDataSource : std_logic_vector (1 downto 0);
+  --signal s_ALUInputBSource : std_logic;
+  --signal s_RegWriteEnable : std_logic;
+  --signal s_RtReadAddrSource : std_logic;
   
 
   
