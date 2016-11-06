@@ -1,15 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
-[*] Sun Nov  6 04:50:56 2016
+[*] Sun Nov  6 05:26:25 2016
 [*]
 [dumpfile] "/Users/jhladik/School/cpre381-labs/mips_tb.vcd"
-[dumpfile_mtime] "Sun Nov  6 04:45:58 2016"
-[dumpfile_size] 645424
+[dumpfile_mtime] "Sun Nov  6 05:26:03 2016"
+[dumpfile_size] 1039094
 [savefile] "/Users/jhladik/School/cpre381-labs/wave_setup.gtkw"
 [timestart] 0
 [size] 1280 694
 [pos] -1 -1
-*-24.192480 21950000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.192480 4400000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] dut.
 [sst_width] 193
 [signals_width] 383
 [sst_expanded] 1
@@ -138,13 +139,12 @@ dut.s_jumpaddress[31:0]
 -group_end
 @22
 dut.s_jumpregaddress[31:0]
-dut.s_branchdecisionaddr[31:0]
 @200
 -Control
 @28
 dut.s_regwriteenable
 dut.s_memwriteenable
-@c00023
+@c00022
 dut.s_alufunction[5:0]
 @28
 (0)dut.s_alufunction[5:0]
@@ -153,7 +153,7 @@ dut.s_alufunction[5:0]
 (3)dut.s_alufunction[5:0]
 (4)dut.s_alufunction[5:0]
 (5)dut.s_alufunction[5:0]
-@1401201
+@1401200
 -group_end
 @28
 dut.s_branchtype[2:0]
@@ -164,6 +164,33 @@ dut.s_regwriteaddrsource[1:0]
 dut.s_regwritedatasource[1:0]
 dut.s_rtreadaddrsource
 dut.s_aluinputbsource
+@c00022
+dut.main_control.controlvector[21:0]
+@28
+(0)dut.main_control.controlvector[21:0]
+(1)dut.main_control.controlvector[21:0]
+(2)dut.main_control.controlvector[21:0]
+(3)dut.main_control.controlvector[21:0]
+(4)dut.main_control.controlvector[21:0]
+(5)dut.main_control.controlvector[21:0]
+(6)dut.main_control.controlvector[21:0]
+(7)dut.main_control.controlvector[21:0]
+(8)dut.main_control.controlvector[21:0]
+(9)dut.main_control.controlvector[21:0]
+(10)dut.main_control.controlvector[21:0]
+(11)dut.main_control.controlvector[21:0]
+(12)dut.main_control.controlvector[21:0]
+(13)dut.main_control.controlvector[21:0]
+(14)dut.main_control.controlvector[21:0]
+(15)dut.main_control.controlvector[21:0]
+(16)dut.main_control.controlvector[21:0]
+(17)dut.main_control.controlvector[21:0]
+(18)dut.main_control.controlvector[21:0]
+(19)dut.main_control.controlvector[21:0]
+(20)dut.main_control.controlvector[21:0]
+(21)dut.main_control.controlvector[21:0]
+@1401200
+-group_end
 @200
 -Register File
 @22

@@ -118,7 +118,8 @@ architecture rom of mips_control is
   signal rom_r : rom_array := (
     FUNC_JALR => "10100000------10001100",
     FUNC_JR   => "00------------10-----0",
-    others    => "10" & a_funct & "------00000000"
+    --others    => "10" & "011000" & "------00000000"
+    others    => "10------------00000000"
     );
 
 --Branch Type ROM
@@ -187,7 +188,7 @@ begin
     o_RtReadAddrSource,
     o_ALUInputBSource
     )
-    <= controlVector;
+    <= ieee.std_logic_1164."&"(ieee.std_logic_1164."&"(controlVector(21 downto 20), a_funct),controlVector(13 downto 0)) when a_op="000000" else controlVector;
 
 
 

@@ -40,7 +40,7 @@ begin  -- architecture behavioral
   testbench: process is
   begin  -- process testbench
     s_rst <= '1';
-    wait for 20 ns;
+    wait for 11 ns;
     s_rst <= '0';
     wait for 1000 ns;
     wait;

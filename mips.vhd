@@ -5,8 +5,8 @@ use ieee.std_logic_1164.all;
 entity mips is
   generic(
     program_file : string := "testing/r_test.mif");
-  port (    i_clk : in std_logic;
-    i_rst : in std_logic);
+  port (i_clk : in std_logic;
+        i_rst     : in std_logic);
 end entity mips;
 -------------------------------------------------------------------------------
 architecture mixed of mips is
@@ -128,7 +128,7 @@ architecture mixed of mips is
       o_MemWriteEnable     : out std_logic;
       o_ALUFunction        : out std_logic_vector(5 downto 0);
       o_BranchType         : out std_logic_vector(2 downto 0);
-      o_MemDataLength     : out std_logic_vector(1 downto 0);
+      o_MemDataLength      : out std_logic_vector(1 downto 0);
       o_MemDataSigned      : out std_logic;
       o_NextPCSource       : out std_logic_vector(1 downto 0);
       o_RegWriteAddrSource : out std_logic_vector(1 downto 0);
@@ -142,7 +142,7 @@ architecture mixed of mips is
   signal s_MemWriteEnable     : std_logic;
   signal s_ALUFunction        : std_logic_vector(5 downto 0);
   signal s_BranchType         : std_logic_vector(2 downto 0);
-  signal s_MemDataLength     : std_logic_vector(1 downto 0);
+  signal s_MemDataLength      : std_logic_vector(1 downto 0);
   signal s_MemDataSigned      : std_logic;
   signal s_NextPCSource       : std_logic_vector(1 downto 0);
   signal s_RegWriteAddrSource : std_logic_vector(1 downto 0);
@@ -176,7 +176,8 @@ architecture mixed of mips is
   signal s_SignExtImmOrAddr                     : std_logic_vector (31 downto 0);
   signal s_JumpAddress                          : std_logic_vector (31 downto 0);
   signal s_JumpRegAddress                       : std_logic_vector (31 downto 0);
-  signal s_BranchDecisionAddr                   : std_logic_vector (31 downto 0);
+  --signal s_BranchDecisionAddr                   : std_logic_vector (31 downto 0);
+  signal s_CurrentPCWordAddr                    : std_logic_vector (31 downto 0);
   --signal s_NextPCSource                         : std_logic_vector (1 downto 0);
 
 
@@ -222,19 +223,19 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- Main Control
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-  main_control : mips_control 
+  main_control : mips_control
     port map(
       i_instruction        => s_Instruction,
       o_RegWriteEnable     => s_RegWriteEnable,
       o_MemWriteEnable     => s_MemWriteEnable,
-      o_ALUFunction        => s_ALUFunction, 
+      o_ALUFunction        => s_ALUFunction,
       o_BranchType         => s_BranchType,
       o_MemDataLength      => s_MemDataLength,
       o_MemDataSigned      => s_MemDataSigned,
       o_NextPCSource       => s_NextPCSource,
       o_RegWriteAddrSource => s_RegWriteAddrSource,
       o_RegWriteDataSource => s_RegWriteDataSource,
-      o_RtReadAddrSource   => s_RtReadAddrSource, 
+      o_RtReadAddrSource   => s_RtReadAddrSource,
       o_ALUInputBSource    => s_ALUInputBSource);
 
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -260,7 +261,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
   instruction_memory : ram
     port map (
-      i_addr  => s_CurrentPC,
+      i_addr  => s_CurrentPCWordAddr,
       o_rdata => s_Instruction,
       i_wdata => X"00000000",
       i_wen   => '0',
@@ -297,6 +298,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_Sel => '1',
       o_F   => s_BranchOffsetShifted);
 
+  s_CurrentPCWordAddr <= "00" & s_CurrentPC(31 downto 2);
 
   s_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);
 
