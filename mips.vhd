@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 -------------------------------------------------------------------------------
 entity mips is
   generic(
-    program_file : string := "prog.mif");
+    program_file : string := "testing/r_test.mif");
   port (    i_clk : in std_logic;
     i_rst : in std_logic);
 end entity mips;
