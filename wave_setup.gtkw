@@ -1,6 +1,6 @@
 [*]
 [*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
-[*] Sun Nov  6 05:26:25 2016
+[*] Sun Nov  6 05:27:08 2016
 [*]
 [dumpfile] "/Users/jhladik/School/cpre381-labs/mips_tb.vcd"
 [dumpfile_mtime] "Sun Nov  6 05:26:03 2016"
@@ -164,33 +164,6 @@ dut.s_regwriteaddrsource[1:0]
 dut.s_regwritedatasource[1:0]
 dut.s_rtreadaddrsource
 dut.s_aluinputbsource
-@c00022
-dut.main_control.controlvector[21:0]
-@28
-(0)dut.main_control.controlvector[21:0]
-(1)dut.main_control.controlvector[21:0]
-(2)dut.main_control.controlvector[21:0]
-(3)dut.main_control.controlvector[21:0]
-(4)dut.main_control.controlvector[21:0]
-(5)dut.main_control.controlvector[21:0]
-(6)dut.main_control.controlvector[21:0]
-(7)dut.main_control.controlvector[21:0]
-(8)dut.main_control.controlvector[21:0]
-(9)dut.main_control.controlvector[21:0]
-(10)dut.main_control.controlvector[21:0]
-(11)dut.main_control.controlvector[21:0]
-(12)dut.main_control.controlvector[21:0]
-(13)dut.main_control.controlvector[21:0]
-(14)dut.main_control.controlvector[21:0]
-(15)dut.main_control.controlvector[21:0]
-(16)dut.main_control.controlvector[21:0]
-(17)dut.main_control.controlvector[21:0]
-(18)dut.main_control.controlvector[21:0]
-(19)dut.main_control.controlvector[21:0]
-(20)dut.main_control.controlvector[21:0]
-(21)dut.main_control.controlvector[21:0]
-@1401200
--group_end
 @200
 -Register File
 @22
