@@ -18,8 +18,12 @@ architecture dataflow of n_shifter is
 
   begin  -- architecture dataflow
 
-  
-  o_F <= (i_A(31 downto 2**n) & (2**n-1 downto 0 => i_In)) when i_Sel = '1' else i_A;
+  generate_one_shifter: if n = 0 generate
+    o_F <= (i_A(30 downto 0) & i_In) when i_Sel = '1' else i_A;
+  end generate generate_one_shifter;
 
+  generate_others_shifter: if n > 0 generate
+    o_F <= (i_A(31-2**n downto 0) & (2**n-1 downto 0 => i_In)) when i_Sel = '1' else i_A;
+  end generate generate_others_shifter;
   
 end architecture dataflow;

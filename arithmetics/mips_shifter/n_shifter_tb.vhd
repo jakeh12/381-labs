@@ -33,17 +33,17 @@ begin  -- architecture behavioral
   testbench: process is
   begin  -- process testbench
 
-    s_A <= X"FFFFFFFF";
+    s_A <= X"BFFFFFFF";
     s_In <= '0';
     s_Sel <= '0';
     wait for 10 ns;
 
-    s_A <= X"FFFFFFFF";
+    s_A <= X"BFFFFFFF";
     s_In <= '0';
     s_Sel <= '1';
     wait for 10 ns;
 
-    s_A <= X"FFFFFFFF";
+    s_A <= X"BFFFFFFF";
     s_In <= '1';
     s_Sel <= '1';
     wait for 10 ns;

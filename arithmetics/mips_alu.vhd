@@ -67,7 +67,7 @@ architecture structural of mips_alu is
   constant FUNC_XOR  : std_logic_vector (5 downto 0) := "100110";
   constant FUNC_NOR  : std_logic_vector (5 downto 0) := "100111";
   constant FUNC_SLT  : std_logic_vector (5 downto 0) := "101010";
-  constant FUNC_SLTU : std_logic_vector (5 downto 0) := "101001";
+  constant FUNC_SLTU : std_logic_vector (5 downto 0) := "101011";
   constant FUNC_MUL  : std_logic_vector (5 downto 0) := "011000";
   constant FUNC_SLL  : std_logic_vector (5 downto 0) := "000000";
   constant FUNC_SRL  : std_logic_vector (5 downto 0) := "000010";
