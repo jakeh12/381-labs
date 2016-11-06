@@ -1,4 +1,5 @@
 *
+!*.gtkw
 !testing/*.asm
 !testing/*.mif
 !*.jpg
