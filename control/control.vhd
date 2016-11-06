@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 -------------------------------------------------------------------------------
 entity mips_control is
 
@@ -10,13 +11,13 @@ entity mips_control is
 	o_MemWriteEnable: out std_logic;
 	o_ALUFunction	: out std_logic_vector(5 downto 0);
 	o_BranchType	: out std_logic_vector(2 downto 0);
-	o_MemDatatLength: out std_logic_vector(1 downto 0);
+	o_MemDataLength: out std_logic_vector(1 downto 0);
 	o_MemDataSigned	: out std_logic;
 	o_NextPCSource	: out std_logic_vector(1 downto 0);
 	o_RegWriteAddrSource 	: out std_logic_vector(1 downto 0);
 	o_RegWriteDataSource 	: out std_logic_vector(1 downto 0);
 	o_RtReadAddrSource 	: out std_logic;
-	o_ALUInputBSource	: out std_logic;
+	o_ALUInputBSource	: out std_logic
     );
 
 end entity mips_control;
@@ -24,9 +25,9 @@ end entity mips_control;
 architecture rom of mips_control is
 
 	--roms
-  type rom_rtype is std_logic_vector(23 downto 0); --the size of all output bits
-  type rom_branch is std_logic_vector(23 downto 0); --the size of all output bits
-  type rom_other is std_logic_vector(23 downto 0); --the size of all output bits
+  --type rom_rtype is std_logic_vector(23 downto 0); --the size of all output bits
+  --type rom_branch is std_logic_vector(23 downto 0); --the size of all output bits
+  --type rom_other is std_logic_vector(23 downto 0); --the size of all output bits
 
   -- checkout MIPS instruction formats (p. 120)
   alias a_op             : std_logic_vector (5 downto 0) is i_instruction(31 downto 26);
@@ -108,20 +109,23 @@ architecture rom of mips_control is
   constant FUNC_SRAV 	: std_logic_vector (5 downto 0) := "000111";
 
   --BRANCH CODES
-  constant BRANCH_BLTZ 	: std_logic_vector (5 downto 0) := "00000";
-  constant BRANCH_BGEZ 	: std_logic_vector (5 downto 0) := "00001";
-  constant BRANCH_BLTZAL : std_logic_vector (5 downto 0) := "10000";
-  constant BRANCH_BGEZAL : std_logic_vector (5 downto 0) := "10001";
+  constant BRANCH_BLTZ 	: std_logic_vector (5 downto 0) := "000000";
+  constant BRANCH_BGEZ 	: std_logic_vector (5 downto 0) := "000001";
+  constant BRANCH_BLTZAL : std_logic_vector (5 downto 0) := "010000";
+  constant BRANCH_BGEZAL : std_logic_vector (5 downto 0) := "010001";
+
+
+ type rom_array is array (63 downto 0) of std_logic_vector(23 downto 0);
 
 
 --R Type ROM
-signal rom_r : rom_rtype := (
+signal rom_r : rom_array := (
 	to_integer(unsigned(FUNC_JALR)) => "10100000-------10001100",
 	others => "10" & a_funct & "-------00000000"
 );
 
 --Branch Type ROM
-signal rom_b : rom_branch := (
+signal rom_b : rom_array := (
 	to_integer(unsigned(BRANCH_BLTZ)) => "00100010010---11----10",
 	to_integer(unsigned(BRANCH_BGEZ)) => "00100010011---11----10",
 	to_integer(unsigned(BRANCH_BLTZAL)) => "10100010010---11111110",
@@ -129,7 +133,7 @@ signal rom_b : rom_branch := (
 );
 
 --All other instructions ROM
-signal rom_o : rom_other := (
+signal rom_o : rom_array := (
 	to_integer(unsigned(OP_ADDI)) => "10100000------00010001",
 	to_integer(unsigned(OP_ADDIU)) => "10100001------00010001",
 	to_integer(unsigned(OP_ORI)) => "10100101------00010001",
@@ -150,12 +154,16 @@ signal rom_o : rom_other := (
 	to_integer(unsigned(OP_SH)) => "01100000---01-00----01",
 	to_integer(unsigned(OP_SW)) => "01100000---00-00----01",
 	to_integer(unsigned(OP_LUI)) => "10------------000110-1"
-)
+);
 
+signal controlVector : std_logic_vector(23 downto 0);
 
 begin
-	--if R type instruction use Rtype rom
-	if (a_op = "000000") then
+
+with a_op select controlVector <=
+rom_r(to_integer(unsigned(a_funct))) when "000000",
+rom_b(to_integer(unsigned('0' & a_rt))) when "000001",
+rom_o(to_integer(unsigned(opcode))) when others;
 
    (
     o_RegWriteEnable,      
@@ -180,70 +188,9 @@ begin
     o_RegWriteDataSource(0),
     o_RegWriteDataSource(1),
     o_ReadAddrSource,
-    o_ALUInputBSource,
+    o_ALUInputBSource
     )
-    <= rom_r(to_integer(unsigned i_opcode)));
-	
-	--else if instruction is the branch op code use the branch rom
-	else if (a_op = "000001") then
-
-   (
-    o_RegWriteEnable,      
-    o_MemWriteEnable,    
-    o_ALUFuntion(0),
-    o_ALUFuntion(1),
-    o_ALUFuntion(2),
-    o_ALUFuntion(3),
-    o_ALUFuntion(4),
-    o_ALUFuntion(5),
-    o_BranchType(0),
-    o_BranchType(1),
-    o_BranchType(2),
-    o_BranchType(3),
-    o_MemDataLength(0),
-    o_MemDataLength(1),
-    o_MemDataSigned,
-    o_NextPCSource(0),
-    o_NextPCSource(1),
-    o_RegWriteAddrSource(0),
-    o_RegWriteAddrSource(1),
-    o_RegWriteDataSource(0),
-    o_RegWriteDataSource(1),
-    o_ReadAddrSource,
-    o_ALUInputBSource,
-    )
-    <= rom_b(to_integer(unsigned (a_rt)));
-
-	--else the instruction is one of the misc. instructions, use other rom
-    else
-
-   (
-    o_RegWriteEnable,      
-    o_MemWriteEnable,    
-    o_ALUFuntion(0),
-    o_ALUFuntion(1),
-    o_ALUFuntion(2),
-    o_ALUFuntion(3),
-    o_ALUFuntion(4),
-    o_ALUFuntion(5),
-    o_BranchType(0),
-    o_BranchType(1),
-    o_BranchType(2),
-    o_BranchType(3),
-    o_MemDataLength(0),
-    o_MemDataLength(1),
-    o_MemDataSigned,
-    o_NextPCSource(0),
-    o_NextPCSource(1),
-    o_RegWriteAddrSource(0),
-    o_RegWriteAddrSource(1),
-    o_RegWriteDataSource(0),
-    o_RegWriteDataSource(1),
-    o_ReadAddrSource,
-    o_ALUInputBSource,
-    )
-    <= rom_o(to_integer(unsigned (i_opcode)));
-    end if;
+	<= controlVector;
 
 
 
