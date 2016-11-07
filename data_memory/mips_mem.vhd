@@ -19,12 +19,13 @@ architecture behavioral of mips_mem is
 
 component ram_wbe is
   
-  generic (
-    init_file : string  := "dmem.mif");  -- memory intialization file
-
+    generic (
+    init_file : string  := "dmem.mif";  -- memory intialization file
+     l         : natural := 10);           -- width of address bus in bits
+  
   port (
     i_byteena : in std_logic_vector (3 downto 0);  -- byte enable for write
-    i_addr  : in  std_logic_vector (9 downto 0);   -- address input
+    i_addr  : in  std_logic_vector (l-1 downto 0);   -- address input
     i_wdata : in  std_logic_vector (31 downto 0);   -- data input
     i_wen   : in  std_logic;                         -- write enable
     o_rdata : out std_logic_vector (31 downto 0);  -- data output
