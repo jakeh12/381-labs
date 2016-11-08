@@ -64,11 +64,11 @@ begin  -- architecture behavioral
   -- This process reacts to changes in i_addr input and outputs the appropriate
   -- data on the o_rdata output.
   -----------------------------------------------------------------------------
-  output_rdata : process (i_addr) is --  output_rdata : process (i_clk, i_addr) is
+  output_rdata : process (i_addr, i_clk) is --  output_rdata : process (i_clk, i_addr) is
   begin
-    --if rising_edge(i_clk) then
+    if rising_edge(i_clk) then
       o_rdata <= ram_block(to_integer(unsigned(i_addr)));
-    --end if;
+    end if;
   end process;
 
   -----------------------------------------------------------------------------
