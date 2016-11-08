@@ -39,15 +39,15 @@ end component;
   signal s_data    : std_logic_vector (31 downto 0);
   signal s_q       : std_logic_vector (31 downto 0);
 
-  alias a_full_word : std_logic_vector (31 downto 0) is s_q (31 downto 0);
+  alias a_full_word : std_logic_vector (31 downto 0) is s_data (31 downto 0);
 
-  alias a_upper_half : std_logic_vector (15 downto 0) is s_q (31 downto 16);
-  alias a_lower_half : std_logic_vector (15 downto 0) is s_q (15 downto 0);
+  alias a_upper_half : std_logic_vector (15 downto 0) is s_data (31 downto 16);
+  alias a_lower_half : std_logic_vector (15 downto 0) is s_data (15 downto 0);
 
-  alias a_highest_byte : std_logic_vector (7 downto 0) is s_q (31 downto 24);
-  alias a_higher_byte  : std_logic_vector (7 downto 0) is s_q (23 downto 16);
-  alias a_lower_byte   : std_logic_vector (7 downto 0) is s_q (15 downto 8);
-  alias a_lowest_byte  : std_logic_vector (7 downto 0) is s_q (7 downto 0);
+  alias a_highest_byte : std_logic_vector (7 downto 0) is s_data (31 downto 24);
+  alias a_higher_byte  : std_logic_vector (7 downto 0) is s_data (23 downto 16);
+  alias a_lower_byte   : std_logic_vector (7 downto 0) is s_data (15 downto 8);
+  alias a_lowest_byte  : std_logic_vector (7 downto 0) is s_data (7 downto 0);
 
   constant FULL_WORD : std_logic_vector (1 downto 0) := "00";
   constant HALF_WORD : std_logic_vector (1 downto 0) := "01";
