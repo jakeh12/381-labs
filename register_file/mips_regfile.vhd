@@ -56,7 +56,7 @@ begin
           );
     end generate null_reg;
 
-    reg_1_31 : if i > 1 generate
+    reg_1_31 : if i > 0 generate
       reg_i : regn
         port map(
           i_CLK => i_clk,
