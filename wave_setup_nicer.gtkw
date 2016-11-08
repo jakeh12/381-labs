@@ -1,0 +1,216 @@
+[*]
+[*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
+[*] Tue Nov  8 04:04:56 2016
+[*]
+[dumpfile] "/Users/jhladik/cpre381-labs/mips_tb.vcd"
+[dumpfile_mtime] "Tue Nov  8 03:47:12 2016"
+[dumpfile_size] 1444150
+[savefile] "/Users/jhladik/cpre381-labs/wave_setup_nicer.gtkw"
+[timestart] 0
+[size] 1280 692
+[pos] -1 -1
+*-25.192480 20500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] dut.
+[treeopen] dut.alu.
+[treeopen] dut.data_memory.
+[sst_width] 193
+[signals_width] 383
+[sst_expanded] 1
+[sst_vpaned_height] 240
+@28
+dut.i_rst
+@200
+-NextPC
+@28
+dut.s_nextpcsource[1:0]
+@c00022
+dut.s_pcplus4[31:0]
+@28
+(0)dut.s_pcplus4[31:0]
+(1)dut.s_pcplus4[31:0]
+(2)dut.s_pcplus4[31:0]
+(3)dut.s_pcplus4[31:0]
+(4)dut.s_pcplus4[31:0]
+(5)dut.s_pcplus4[31:0]
+(6)dut.s_pcplus4[31:0]
+(7)dut.s_pcplus4[31:0]
+(8)dut.s_pcplus4[31:0]
+(9)dut.s_pcplus4[31:0]
+(10)dut.s_pcplus4[31:0]
+(11)dut.s_pcplus4[31:0]
+(12)dut.s_pcplus4[31:0]
+(13)dut.s_pcplus4[31:0]
+(14)dut.s_pcplus4[31:0]
+(15)dut.s_pcplus4[31:0]
+(16)dut.s_pcplus4[31:0]
+(17)dut.s_pcplus4[31:0]
+(18)dut.s_pcplus4[31:0]
+(19)dut.s_pcplus4[31:0]
+(20)dut.s_pcplus4[31:0]
+(21)dut.s_pcplus4[31:0]
+(22)dut.s_pcplus4[31:0]
+(23)dut.s_pcplus4[31:0]
+(24)dut.s_pcplus4[31:0]
+(25)dut.s_pcplus4[31:0]
+(26)dut.s_pcplus4[31:0]
+(27)dut.s_pcplus4[31:0]
+(28)dut.s_pcplus4[31:0]
+(29)dut.s_pcplus4[31:0]
+(30)dut.s_pcplus4[31:0]
+(31)dut.s_pcplus4[31:0]
+@1401200
+-group_end
+@c00022
+dut.s_jumpaddress[31:0]
+@28
+(0)dut.s_jumpaddress[31:0]
+(1)dut.s_jumpaddress[31:0]
+(2)dut.s_jumpaddress[31:0]
+(3)dut.s_jumpaddress[31:0]
+(4)dut.s_jumpaddress[31:0]
+(5)dut.s_jumpaddress[31:0]
+(6)dut.s_jumpaddress[31:0]
+(7)dut.s_jumpaddress[31:0]
+(8)dut.s_jumpaddress[31:0]
+(9)dut.s_jumpaddress[31:0]
+(10)dut.s_jumpaddress[31:0]
+(11)dut.s_jumpaddress[31:0]
+(12)dut.s_jumpaddress[31:0]
+(13)dut.s_jumpaddress[31:0]
+(14)dut.s_jumpaddress[31:0]
+(15)dut.s_jumpaddress[31:0]
+(16)dut.s_jumpaddress[31:0]
+(17)dut.s_jumpaddress[31:0]
+(18)dut.s_jumpaddress[31:0]
+(19)dut.s_jumpaddress[31:0]
+(20)dut.s_jumpaddress[31:0]
+(21)dut.s_jumpaddress[31:0]
+(22)dut.s_jumpaddress[31:0]
+(23)dut.s_jumpaddress[31:0]
+(24)dut.s_jumpaddress[31:0]
+(25)dut.s_jumpaddress[31:0]
+(26)dut.s_jumpaddress[31:0]
+(27)dut.s_jumpaddress[31:0]
+(28)dut.s_jumpaddress[31:0]
+(29)dut.s_jumpaddress[31:0]
+(30)dut.s_jumpaddress[31:0]
+(31)dut.s_jumpaddress[31:0]
+@1401200
+-group_end
+@22
+dut.s_jumpregaddress[31:0]
+dut.s_branchdecisionaddress[31:0]
+@200
+-Control
+@28
+dut.s_branchtype[2:0]
+dut.s_memdatalength[1:0]
+dut.s_memdatasigned
+dut.s_regwriteaddrsource[1:0]
+dut.s_regwritedatasource[1:0]
+dut.s_rtreadaddrsource
+dut.s_aluinputbsource
+dut.i_clk
+@201
+-Instruction
+@22
+dut.s_currentpc[31:0]
+dut.s_instruction[31:0]
+@200
+-ALU
+@22
+dut.alu.i_a[31:0]
+dut.alu.i_b[31:0]
+@c00022
+dut.s_alufunction[5:0]
+@28
+(0)dut.s_alufunction[5:0]
+(1)dut.s_alufunction[5:0]
+(2)dut.s_alufunction[5:0]
+(3)dut.s_alufunction[5:0]
+(4)dut.s_alufunction[5:0]
+(5)dut.s_alufunction[5:0]
+@1401200
+-group_end
+@28
+dut.s_aluflagzero
+@200
+-Register File
+@22
+dut.register_file.i_raddr1[4:0]
+dut.register_file.o_rdata1[31:0]
+dut.register_file.i_raddr2[4:0]
+dut.register_file.o_rdata2[31:0]
+dut.register_file.i_waddr[4:0]
+dut.register_file.i_wdata[31:0]
+@28
+dut.s_regwriteenable
+@200
+-Data Memory
+@22
+dut.data_memory.dmem.i_addr[13:0]
+dut.data_memory.dmem.o_rdata[31:0]
+dut.data_memory.dmem.i_wdata[31:0]
+dut.data_memory.dmem.i_byteena[3:0]
+@28
+dut.s_memwriteenable
+@22
+dut.data_memory.dmem.bank0[31:0]
+dut.data_memory.dmem.bank1[31:0]
+dut.data_memory.dmem.bank2[31:0]
+dut.data_memory.dmem.bank3[31:0]
+@200
+-NextPC Calculations
+@28
+dut.s_branchdecision
+@22
+dut.s_nextpc[31:0]
+@c00022
+dut.s_jumpaddrextended[31:0]
+@28
+(0)dut.s_jumpaddrextended[31:0]
+(1)dut.s_jumpaddrextended[31:0]
+(2)dut.s_jumpaddrextended[31:0]
+(3)dut.s_jumpaddrextended[31:0]
+(4)dut.s_jumpaddrextended[31:0]
+(5)dut.s_jumpaddrextended[31:0]
+(6)dut.s_jumpaddrextended[31:0]
+(7)dut.s_jumpaddrextended[31:0]
+(8)dut.s_jumpaddrextended[31:0]
+(9)dut.s_jumpaddrextended[31:0]
+(10)dut.s_jumpaddrextended[31:0]
+(11)dut.s_jumpaddrextended[31:0]
+(12)dut.s_jumpaddrextended[31:0]
+(13)dut.s_jumpaddrextended[31:0]
+(14)dut.s_jumpaddrextended[31:0]
+(15)dut.s_jumpaddrextended[31:0]
+(16)dut.s_jumpaddrextended[31:0]
+(17)dut.s_jumpaddrextended[31:0]
+(18)dut.s_jumpaddrextended[31:0]
+(19)dut.s_jumpaddrextended[31:0]
+(20)dut.s_jumpaddrextended[31:0]
+(21)dut.s_jumpaddrextended[31:0]
+(22)dut.s_jumpaddrextended[31:0]
+(23)dut.s_jumpaddrextended[31:0]
+(24)dut.s_jumpaddrextended[31:0]
+(25)dut.s_jumpaddrextended[31:0]
+(26)dut.s_jumpaddrextended[31:0]
+(27)dut.s_jumpaddrextended[31:0]
+(28)dut.s_jumpaddrextended[31:0]
+(29)dut.s_jumpaddrextended[31:0]
+(30)dut.s_jumpaddrextended[31:0]
+(31)dut.s_jumpaddrextended[31:0]
+@1401200
+-group_end
+@22
+dut.s_jumpaddrshifted[31:0]
+dut.s_branchaddress[31:0]
+dut.s_branchoffsetshifted[31:0]
+dut.s_branchdecisionaddress[31:0]
+@200
+-Misc
+@22
+dut.s_signextimmoraddr[31:0]
+dut.s_upperimm[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

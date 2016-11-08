@@ -4,6 +4,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 --------------------------------------------------------------------------------
 entity mips_mem is
+  generic (
+    l : natural := 14);
   port (
     i_addr   : in  std_logic_vector(31 downto 0);
     i_wdata  : in  std_logic_vector(31 downto 0);
@@ -21,7 +23,7 @@ component ram_wbe is
   
     generic (
     init_file : string  := "dmem.mif";  -- memory intialization file
-     l         : natural := 10);           -- width of address bus in bits
+     l         : natural := l);           -- width of address bus in bits
   
   port (
     i_byteena : in std_logic_vector (3 downto 0);  -- byte enable for write
@@ -34,20 +36,20 @@ component ram_wbe is
 end component;
   
 
-  signal s_address : std_logic_vector (9 downto 0);
+  signal s_address : std_logic_vector (l-1 downto 0);
   signal s_byteena : std_logic_vector (3 downto 0);
   signal s_data    : std_logic_vector (31 downto 0);
   signal s_q       : std_logic_vector (31 downto 0);
 
-  alias a_full_word : std_logic_vector (31 downto 0) is s_data (31 downto 0);
+  alias a_full_word : std_logic_vector (31 downto 0) is s_q (31 downto 0);
 
-  alias a_upper_half : std_logic_vector (15 downto 0) is s_data (31 downto 16);
-  alias a_lower_half : std_logic_vector (15 downto 0) is s_data (15 downto 0);
+  alias a_upper_half : std_logic_vector (15 downto 0) is s_q (31 downto 16);
+  alias a_lower_half : std_logic_vector (15 downto 0) is s_q (15 downto 0);
 
-  alias a_highest_byte : std_logic_vector (7 downto 0) is s_data (31 downto 24);
-  alias a_higher_byte  : std_logic_vector (7 downto 0) is s_data (23 downto 16);
-  alias a_lower_byte   : std_logic_vector (7 downto 0) is s_data (15 downto 8);
-  alias a_lowest_byte  : std_logic_vector (7 downto 0) is s_data (7 downto 0);
+  alias a_highest_byte : std_logic_vector (7 downto 0) is s_q (31 downto 24);
+  alias a_higher_byte  : std_logic_vector (7 downto 0) is s_q (23 downto 16);
+  alias a_lower_byte   : std_logic_vector (7 downto 0) is s_q (15 downto 8);
+  alias a_lowest_byte  : std_logic_vector (7 downto 0) is s_q (7 downto 0);
 
   constant FULL_WORD : std_logic_vector (1 downto 0) := "00";
   constant HALF_WORD : std_logic_vector (1 downto 0) := "01";
@@ -69,7 +71,7 @@ begin
   mimps_mem : process (i_clk, i_wen, i_size, i_addr, i_signed)
   begin
 
-    s_address <= i_addr(11 downto 2);
+    s_address <= i_addr(15 downto 2);
 
     case i_size is
 

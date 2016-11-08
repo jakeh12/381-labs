@@ -16,7 +16,7 @@ entity ram_wbe is
   
   generic (
     init_file : string  := "dmem.mif";  -- memory intialization file
-     l         : natural := 10);           -- width of address bus in bits
+     l         : natural := 14);           -- width of address bus in bits
   port (
     i_byteena : in std_logic_vector (3 downto 0);  -- byte enable for write
     i_addr  : in  std_logic_vector (l-1 downto 0);   -- address input
@@ -44,7 +44,7 @@ architecture behavioral of ram_wbe is
     variable current_word : std_logic_vector(31 downto 0);
     variable result       : mem_array := (others => (others => '0'));
   begin
-    for i in 0 to 1023 loop
+    for i in 0 to (2**l-1) loop
       exit when endfile(file_object);
       readline(file_object, current_line);
       hread(current_line, current_word);

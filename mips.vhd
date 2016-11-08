@@ -110,6 +110,8 @@ architecture mixed of mips is
 
   -- Data memory
   component mips_mem is
+    generic (
+      l : natural := 14);
     port (
       i_addr   : in  std_logic_vector(31 downto 0);
       i_wdata  : in  std_logic_vector(31 downto 0);
