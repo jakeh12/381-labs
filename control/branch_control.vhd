@@ -26,7 +26,7 @@ begin  -- architecture dataflow
   s_bne <= not i_ALUFlagZero;
   s_bltz <= i_ALUFlagNeg;
   s_bgez <= not i_ALUFlagNeg;
-  s_blez <= i_ALUFlagZero and i_ALUFlagNeg;
+  s_blez <= i_ALUFlagZero or i_ALUFlagNeg;
   s_bgtz <= i_ALUFlagZero nor i_ALUFlagNeg;
 
   with i_BranchType select
