@@ -24,7 +24,7 @@ begin  -- architecture behavioral
 
   DUT: mips
     generic map (
-      program_file => "sl_test.mif")
+      program_file => "simple_s_test.mif")
     port map (
       i_clk => s_clk,
       i_rst => s_rst);
