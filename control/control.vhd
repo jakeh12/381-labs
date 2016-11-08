@@ -133,6 +133,10 @@ architecture rom of mips_control is
 
 --All other instructions ROM
   signal rom_o : rom_array := (
+    OP_BEQ   => "00100010000---11----00",
+    OP_BNE   => "00100010001---11----00",
+    OP_BLEZ  => "00100010100---11----10",
+    OP_BGTZ  => "00100010101---11----10",
     OP_ADDI  => "10100000------00010001",
     OP_ADDIU => "10100001------00010001",
     OP_ORI   => "10100101------00010001",

@@ -22,7 +22,7 @@ architecture mixed of mips is
   -- N-position shifter
   component n_shifter is
     generic (
-      n : natural := 2);
+      n : natural := 1);
 
     port (
       i_A   : in  std_logic_vector (31 downto 0);
