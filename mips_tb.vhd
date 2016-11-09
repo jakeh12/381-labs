@@ -13,7 +13,7 @@ architecture behavioral of mips_tb is
 
   component mips is
     generic(
-      program_file : string := "testing/fibb.mif");
+      program_file : string := "testing/merge.mif");
     port (
       i_clk : in std_logic;
       i_rst : in std_logic);
@@ -24,7 +24,7 @@ begin  -- architecture behavioral
 
   DUT: mips
     generic map (
-      program_file => "testing/function.mif")
+      program_file => "testing/merge.mif")
     port map (
       i_clk => s_clk,
       i_rst => s_rst);
