@@ -1,32 +1,15 @@
-top ?= alu_32bit_tb
-time ?= 1000
+top ?= you_forgot_to_specify_top_module
+time ?= 100000
+path ?= .
 
 all:
 	ghdl --clean
 	ghdl --remove
-	rm -rf work *.o $(top)
-	mkdir work
-	ghdl -i --workdir=work *.vhd
-	ghdl -m --workdir=work $(top)
-	ghdl -r --workdir=work $(top) --stop-time=$(time)ns --vcd=$(top).vcd
+	rm -rf work $(path)/*.o $(path)/$(top)
+	mkdir $(path)/work
+	ghdl -i --ieee=synopsys --workdir=$(path)/work $(path)/*.vhd
+	ghdl -m --ieee=synopsys --workdir=$(path)/work $(top)
+	ghdl -r --ieee=synopsys --workdir=$(path)/work $(top) --assert-level=error --vcd=$(path)/$(top).vcd  --stop-time=$(time)ns
 	ghdl --clean
 	ghdl --remove
-	rm -rf work *.o $(top)
-
-clean:
-	ghdl --clean
-	ghdl --remove
-	rm -rf work
-	rm -f *.o
-
-note:
-	ghdl --clean
-	ghdl --remove
-	rm -rf work *.o $(top)
-	mkdir work
-	ghdl -i --workdir=work *.vhd
-	ghdl -m --workdir=work $(top)
-	ghdl -r --workdir=work $(top) --assert-level=note --vcd=$(top).vcd
-	ghdl --clean
-	ghdl --remove
-	rm -rf work *.o $(top)
+	rm -rf $(path)/work $(path)/*.o $(path)/$(top)

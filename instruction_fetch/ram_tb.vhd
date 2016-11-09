@@ -11,10 +11,10 @@ architecture behavioral of ram_tb is
   component ram is
     generic (
       n         : natural := 32;         -- width of word in bits
-      l         : natural := 10;  -- width of address bus in bits                                 
+      l         : natural := 8;  -- width of address bus in bits                                 
       init_file : string  := "ram.mif");  -- memory intialization file
     port (
-      i_addr  : in  std_logic_vector (n-1 downto 0);  -- address input
+      i_addr  : in  std_logic_vector (l-1 downto 0);  -- address input
       i_wdata : in  std_logic_vector (n-1 downto 0);  -- data input
       o_rdata : out std_logic_vector (n-1 downto 0);  -- data output
       i_wen   : in  std_logic;
@@ -22,8 +22,8 @@ architecture behavioral of ram_tb is
   end component ram;
 
   signal s_addr  : std_logic_vector (7 downto 0);
-  signal s_rdata : std_logic_vector (7 downto 0);
-  signal s_wdata : std_logic_vector (7 downto 0);
+  signal s_rdata : std_logic_vector (31 downto 0);
+  signal s_wdata : std_logic_vector (31 downto 0);
   signal s_wen   : std_logic;
   signal s_clk   : std_logic;
   
@@ -49,7 +49,7 @@ begin  -- architecture behavioral
   begin  -- process
     
     s_addr <= "00000000";
-    s_wdata <= "00000000";
+    s_wdata <= X"00000000";
     s_wen <= '0';
     wait for 10 ns;
 
@@ -57,7 +57,7 @@ begin  -- architecture behavioral
     for i in 0 to 255 loop
       s_addr <= std_logic_vector(to_unsigned(i, 8));
       wait for 10 ns;
-      assert s_rdata = std_logic_vector(to_unsigned(255-i, 8))
+      assert s_rdata = std_logic_vector(to_unsigned(255-i, 32))
         report "rom test failed, unexpected value at address "
         & integer'image(i)
         severity error;
@@ -66,11 +66,11 @@ begin  -- architecture behavioral
     -- test writing ordered values
     for i in 0 to 255 loop
       s_addr <= std_logic_vector(to_unsigned(i, 8));
-      s_wdata <= std_logic_vector(to_unsigned(i, 8));
+      s_wdata <= std_logic_vector(to_unsigned(i, 32));
       s_wen <= '1';
       wait for 10 ns;
       s_wen <= '0';
-      assert s_rdata = std_logic_vector(to_unsigned(255-i, 8))
+      assert s_rdata = std_logic_vector(to_unsigned(255-i, 32))
         report "rom test failed, unexpected value at address "
         & integer'image(i)
         severity error;
@@ -80,7 +80,7 @@ begin  -- architecture behavioral
     for i in 0 to 255 loop
       s_addr <= std_logic_vector(to_unsigned(i, 8));
       wait for 10 ns;
-      assert s_rdata = std_logic_vector(to_unsigned(i, 8))
+      assert s_rdata = std_logic_vector(to_unsigned(i, 32))
         report "rom test failed, unexpected value at address "
         & integer'image(i)
         severity error;
@@ -89,10 +89,10 @@ begin  -- architecture behavioral
 
     -- test reading written values
     s_addr <= "00000000";
-    s_wdata <= "10101010";
+    s_wdata <= x"10101010";
     s_wen <= '0';
     wait for 10 ns;
-    assert s_rdata = "00000000"
+    assert s_rdata = x"00000000"
     report "rom test failed, wen does not prevent write"
     severity error;
    
