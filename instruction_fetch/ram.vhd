@@ -20,7 +20,7 @@ entity ram is
     init_file : string  := "ram.mif");  -- memory intialization file
 
   port (
-    i_addr  : in  std_logic_vector (n-1 downto 0);   -- address input
+    i_addr  : in  std_logic_vector (l-1 downto 0);   -- address input
     i_wdata : in  std_logic_vector (n-1 downto 0);   -- data input
     i_wen   : in  std_logic;                         -- write enable
     o_rdata : out std_logic_vector (n-1 downto 0);  -- data output

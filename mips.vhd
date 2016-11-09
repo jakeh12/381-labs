@@ -64,7 +64,7 @@ architecture mixed of mips is
       l         : natural := 10;  -- width of address bus in bits                                 
       init_file : string  := program_file);  -- memory intialization file
     port (
-      i_addr  : in  std_logic_vector (n-1 downto 0);  -- address input
+      i_addr  : in  std_logic_vector (l-1 downto 0);  -- address input
       i_wdata : in  std_logic_vector (n-1 downto 0);  -- data input
       o_rdata : out std_logic_vector (n-1 downto 0);  -- data output
       i_wen   : in  std_logic;
@@ -179,7 +179,7 @@ architecture mixed of mips is
   signal s_JumpAddress                          : std_logic_vector (31 downto 0);
   signal s_JumpRegAddress                       : std_logic_vector (31 downto 0);
   --signal s_BranchDecisionAddr                   : std_logic_vector (31 downto 0);
-  signal s_CurrentPCWordAddr                    : std_logic_vector (31 downto 0);
+  signal s_CurrentPCWordAddr                    : std_logic_vector (9 downto 0);
   --signal s_NextPCSource                         : std_logic_vector (1 downto 0);
 
 
@@ -300,7 +300,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_Sel => '1',
       o_F   => s_BranchOffsetShifted);
 
-  s_CurrentPCWordAddr <= "00" & s_CurrentPC(31 downto 2);
+  s_CurrentPCWordAddr <= "00" & s_CurrentPC(9 downto 2);
 
   s_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);
 

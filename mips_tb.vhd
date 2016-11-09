@@ -24,7 +24,7 @@ begin  -- architecture behavioral
 
   DUT: mips
     generic map (
-      program_file => "testing/function.mif")
+      program_file => "testing/terrible_bubblesort.mif")
     port map (
       i_clk => s_clk,
       i_rst => s_rst);
