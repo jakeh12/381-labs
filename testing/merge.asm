@@ -1,4 +1,4 @@
-		addi $a0, $zero, 10
+		addi $a0, $zero, 8
 		
 		# load values into memory
 		addi $t0, $zero, 4
