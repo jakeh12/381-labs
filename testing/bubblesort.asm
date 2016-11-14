@@ -3,9 +3,9 @@
 #######################################
 
 #put values int reg9 - reg12
-addi $t1,$zero, 5
+addi $t1,$zero, -5
 addi $t2,$zero, 4
-addi $t3,$zero, 3
+addi $t3,$zero, 0
 addi $t4,$zero, 1
 
 #first check

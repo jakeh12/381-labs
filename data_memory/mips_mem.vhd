@@ -70,7 +70,7 @@ begin
 
    s_address <= i_addr(15 downto 2);
 
-  mimps_mem : process (i_size, i_wdata, i_signed, s_q)
+  mimps_mem : process (i_addr, i_size, i_wdata, i_signed, s_q)
   begin
 
     case i_size is
