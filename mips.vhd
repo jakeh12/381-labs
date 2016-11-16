@@ -153,23 +153,6 @@ architecture mixed of mips is
   signal s_ALUInputBSource    : std_logic;
 
 
-
-  -----------------------------------------------------------------------------
-  -- NEW, DO NOT DELETE
-  -----------------------------------------------------------------------------
-  -- Control signals
-  --signal s_MemDataLength, s_MemDataSigned : std_logic;
-  --signal s_MemWriteEnable : std_logic;
-  --signal s_BranchType : std_logic_vector (2 downto 0);
-  --signal s_ALUFunction : std_logic_vector (5 downto 0);
-  --signal s_RegWriteDataSource : std_logic_vector (1 downto 0);
-  --signal s_ALUInputBSource : std_logic;
-  --signal s_RegWriteEnable : std_logic;
-  --signal s_RtReadAddrSource : std_logic;
-
-
-
-
   -- Instruction Fetch signals
   signal s_CurrentPC, s_NextPC, s_PCplus4       : std_logic_vector (31 downto 0);
   signal s_Instruction, s_JumpAddrShifted       : std_logic_vector (31 downto 0);
@@ -178,9 +161,7 @@ architecture mixed of mips is
   signal s_SignExtImmOrAddr                     : std_logic_vector (31 downto 0);
   signal s_JumpAddress                          : std_logic_vector (31 downto 0);
   signal s_JumpRegAddress                       : std_logic_vector (31 downto 0);
-  --signal s_BranchDecisionAddr                   : std_logic_vector (31 downto 0);
   signal s_CurrentPCWordAddr                    : std_logic_vector (9 downto 0);
-  --signal s_NextPCSource                         : std_logic_vector (1 downto 0);
 
 
   -- Branch Control Signals

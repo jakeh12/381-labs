@@ -113,16 +113,14 @@ architecture rom of mips_control is
 
   type rom_array is array (63 downto 0) of std_logic_vector(21 downto 0);  
 
-  --signal dummy : integer := 61;
   --R Type ROM
   signal rom_r : rom_array := (
     FUNC_JALR => "10100000------10001100",
     FUNC_JR   => "00------------10-----0",
-    --others    => "10" & "011000" & "------00000000"
     others    => "10------------00000000"
     );
 
---Branch Type ROM
+  --Branch Type ROM
   signal rom_b : rom_array := (
     BRANCH_BLTZ   => "00100010010---11----10",
     BRANCH_BGEZ   => "00100010011---11----10",
@@ -131,7 +129,7 @@ architecture rom of mips_control is
     others => "0000000000000000000000"
     );
 
---All other instructions ROM
+  --All other instructions ROM
   signal rom_o : rom_array := (
     OP_BEQ   => "00100010000---11----00",
     OP_BNE   => "00100010001---11----00",
@@ -159,6 +157,7 @@ architecture rom of mips_control is
     others   => "0000000000000000000000"
     );
 
+  --the vector with all signals except for function code
   signal controlVector : std_logic_vector(21 downto 0);
 
 begin
@@ -192,6 +191,7 @@ begin
     o_RtReadAddrSource,
     o_ALUInputBSource
     )
+    --logic to pass on function code if needed
     <= ieee.std_logic_1164."&"(ieee.std_logic_1164."&"(controlVector(21 downto 20), a_funct),controlVector(13 downto 0)) when a_op="000000" else controlVector;
 
 
