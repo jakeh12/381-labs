@@ -324,11 +324,6 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
     s_BranchDecisionAddress when "11",
     X"00000000"             when others;  -- should never happen
 
-
-
-
-
-
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- Register File
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
