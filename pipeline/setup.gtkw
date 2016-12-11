@@ -1,0 +1,39 @@
+[*]
+[*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
+[*] Sun Dec 11 04:48:01 2016
+[*]
+[dumpfile] "/Users/jhladik/cpre381-labs/pipeline/pipereg_tb.vcd"
+[dumpfile_mtime] "Sun Dec 11 03:53:16 2016"
+[dumpfile_size] 7404
+[savefile] "/Users/jhladik/cpre381-labs/pipeline/setup.gtkw"
+[timestart] 0
+[size] 1000 600
+[pos] -1 -1
+*-25.181459 95800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 193
+[signals_width] 150
+[sst_expanded] 1
+[sst_vpaned_height] 168
+@200
+-IF/ID
+@22
+ifid.i_d[7:0]
+ifid.o_q[7:0]
+@200
+-ID/EX
+@22
+idex.i_d[7:0]
+@23
+idex.o_q[7:0]
+@200
+-EX/MEM
+@22
+exmem.i_d[7:0]
+exmem.o_q[7:0]
+@200
+-MEM/WB
+@22
+memwb.i_d[7:0]
+memwb.o_q[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
