@@ -205,7 +205,7 @@ architecture mixed of mips is
   alias a_in_ifid_PCplus4 : std_logic_vector (31 downto 0) is ;
   alias a_out_ifid_PCplus4 : std_logic_vector (31 downto 0) is ;
 
-  --ID/EX
+  --ID/EX alias
   alias a_in_idex_Instruction : std_logic_vector (31 downto 0) is ;
   alias a_out_idex_Instruction : std_logic_vector (31 downto 0) is ;
   alias a_in_idex_PCplus4 : std_logic_vector (31 downto 0) is ;
@@ -234,15 +234,8 @@ architecture mixed of mips is
   alias a_out_idex_ALUInputBSource : std_logic is ;
   alias a_out_idex_RtData : std_logic_vector(31 downto 0) is ; 
   alias a_in_idex_RtData : std_logic_vector(31 downto 0) is ;
-  alias a_out_idex_RsData : std_logic_vector(31 downto 0) is ;
-  alias a_in_idex_RsData : std_logic_vector(31 downto 0) is ;
-  alias a_out_idex_SignExtImm : std_logic_vector(31 downto 0) is ;
-  alias a_in_idex_SignExtImm : std_logic_vector(31 downto 0) is ;
 
-  
-
-
-  --EX/MEM
+  --EX/MEM alias
   alias a_in_exmem_Instruction : std_logic_vector (31 downto 0) is ;
   alias a_out_exmem_Instruction : std_logic_vector (31 downto 0) is ;
   alias a_in_exmem_PCplus4 : std_logic_vector (31 downto 0) is ;
@@ -258,19 +251,17 @@ architecture mixed of mips is
   alias a_in_exmem_MemDataLength : std_logic_vector(1 downto 0) is ;
   alias a_out_exmem_MemDataLength : std_logic_vector(1 downto 0) is ;
   alias a_in_exmem_MemDataSigned : std_logic is ;        
-  alias a_out_exmem_MemDataSigned : std_logic is ;        
+  alias a_out_exmem_MemDataSigned : std_logic is ;    
+  --may not need NEXTPCSOURCE v
   alias a_in_exmem_NextPCSource : std_logic_vector(1 downto 0) is ;        
-  alias a_out_exmem_NextPCSource : std_logic_vector(1 downto 0) is ;        
-  alias a_in_exmem_ALUFunction :std_logic_vector(5 downto 0) is ;
-  alias a_out_exmem_ALUFunction : std_logic_vector(5 downto 0) is ;
-  alias a_in_exmem_BranchType : std_logic_vector (4 downto 0) is ;
-  alias a_out_exmem_BranchType : std_logic_vector (4 downto 0) is ;
-  alias a_in_exmem_RtReadAddrSource : std_logic is ;
-  alias a_out_exmem_RtReadAddrSource : std_logic is ;
-  alias a_in_exmem_ALUInputBSource : std_logic is ;
-  alias a_out_exmem_ALUInputBSource : std_logic is ;
+  alias a_out_exmem_NextPCSource : std_logic_vector(1 downto 0) is ;
+  --may not need NEXTPCSOURCE ^
+  alias a_in_exmem_ALUResult : std_logic_vector(31 downto 0) is ;
+  alias a_out_exmem_ALUResult : std_logic_vector(31 downto 0) is ;
+  alias a_out_exmem_RtData : std_logic_vector(31 downto 0) is ; 
+  alias a_in_exmem_RtData : std_logic_vector(31 downto 0) is ; 
  
-  --MEM/WB
+  --MEM/WB alias
   alias a_in_memwb_Instruction : std_logic_vector (31 downto 0) is ;
   alias a_out_memwb_Instruction : std_logic_vector (31 downto 0) is ;
   alias a_in_memwb_PCplus4 : std_logic_vector (31 downto 0) is ;
@@ -281,22 +272,20 @@ architecture mixed of mips is
   alias a_out_memwb_RegWriteAddrSource : std_logic_vector(1 downto 0) is ;
   alias a_in_memwb_RegWriteDataSource : std_logic_vector(1 downto 0) is ;
   alias a_out_memwb_RegWriteDataSource : std_logic_vector(1 downto 0) is ;
-  alias a_in_memwb_MemWriteEnable : std_logic is ;
-  alias a_out_memwb_MemWriteEnable : std_logic is ;
-  alias a_in_memwb_MemDataLength : std_logic_vector(1 downto 0) is ;
-  alias a_out_memwb_MemDataLength : std_logic_vector(1 downto 0) is ;
-  alias a_in_memwb_MemDataSigned : std_logic is ;        
-  alias a_out_memwb_MemDataSigned : std_logic is ;        
-  alias a_in_memwb_NextPCSource : std_logic_vector(1 downto 0) is ;        
-  alias a_out_memwb_NextPCSource : std_logic_vector(1 downto 0) is ;        
-  alias a_in_memwb_ALUFunction :std_logic_vector(5 downto 0) is ;
-  alias a_out_memwb_ALUFunction : std_logic_vector(5 downto 0) is ;
-  alias a_in_memwb_BranchType : std_logic_vector (4 downto 0) is ;
-  alias a_out_memwb_BranchType : std_logic_vector (4 downto 0) is ;
-  alias a_in_memwb_RtReadAddrSource : std_logic is ;
-  alias a_out_memwb_RtReadAddrSource : std_logic is ;
-  alias a_in_memwb_ALUInputBSource : std_logic is ;
-  alias a_out_memwb_ALUInputBSource : std_logic is ;
+  alias a_out_memwb_MemData : std_logic_vector(31 downto 0) is ; 
+  alias a_in_memwb_MemData : std_logic_vector(31 downto 0) is ;
+  alias a_in_exmem_ALUResult : std_logic_vector(31 downto 0) is ;
+  alias a_out_exmem_ALUResult : std_logic_vector(31 downto 0) is ;
+  
+  --divider registers input and output
+  alias a_in_ifid : std_logic_vector( downto 0 ) is ;
+  alias a_out_ifid : std_logic_vector( downto 0 ) is ;
+  alias a_in_idex : std_logic_vector( downto 0 ) is ;
+  alias a_out_idex : std_logic_vector( downto 0 ) is ;
+  alias a_in_exmem : std_logic_vector( downto 0 ) is ;
+  alias a_out_exmem : std_logic_vector( downto 0 ) is ;
+  alias a_in_memwb : std_logic_vector( downto 0 ) is ;
+  alias a_out_memwb : std_logic_vector( downto 0 ) is ; 
 
 
 begin  -- ARCHITECTURE DEFINITION STARTS HERE --
