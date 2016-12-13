@@ -11,11 +11,19 @@ end entity pipe;
 -------------------------------------------------------------------------------
 architecture mixed of pipe is
 
+  -- Branch logic unit
+  component brancher
+    port (
+      i_A, i_B         : in  std_logic_vector (31 downto 0);
+      i_BranchType     : in  std_logic_vector (2 downto 0);
+      o_BranchDecision : out std_logic);
+  end component;
+
   -- Pipeline n-bit register
   component pipereg
     generic(n : integer := 256);
-    port(i_CLK   : in  std_logic;    -- Clock input
-         i_FLUSH : in  std_logic;    -- Reset input
+    port(i_CLK   : in  std_logic;                        -- Clock input
+         i_FLUSH : in  std_logic;                        -- Reset input
          i_STALL : in  std_logic;
          i_D     : in  std_logic_vector(n-1 downto 0);   -- Data value input
          o_Q     : out std_logic_vector(n-1 downto 0));  -- Data value output
@@ -213,23 +221,19 @@ architecture mixed of pipe is
   -- Pipeline register signals
   signal s_IFID_Flush, s_IDEX_Flush, s_EXMEM_Flush, s_MEMWB_Flush : std_logic;
   signal s_IFID_Stall, s_IDEX_Stall, s_EXMEM_Stall, s_MEMWB_Stall : std_logic;
-  signal s_in_IFID, s_out_IFID : std_logic_vector (255 downto 0);
-  signal s_in_IDEX, s_out_IDEX : std_logic_vector (255 downto 0);
-  signal s_in_EXMEM, s_out_EXMEM  : std_logic_vector (255 downto 0);
-  signal s_in_MEMWB, s_out_MEMWB : std_logic_vector (255 downto 0);
+  signal s_in_IFID, s_out_IFID                                    : std_logic_vector (255 downto 0);
+  signal s_in_IDEX, s_out_IDEX                                    : std_logic_vector (255 downto 0);
+  signal s_in_EXMEM, s_out_EXMEM                                  : std_logic_vector (255 downto 0);
+  signal s_in_MEMWB, s_out_MEMWB                                  : std_logic_vector (255 downto 0);
 
-  
+
   --IF/ID alias
   alias a_in_ifid_Instruction  : std_logic_vector (31 downto 0) is s_in_IFID (31 downto 0);
   alias a_out_ifid_Instruction : std_logic_vector (31 downto 0) is s_out_IFID (31 downto 0);
   alias a_in_ifid_PCplus4      : std_logic_vector (31 downto 0) is s_in_IFID (63 downto 32);
   alias a_out_ifid_PCplus4     : std_logic_vector (31 downto 0) is s_out_IFID (63 downto 32);
   --
-  alias a_in_ifid_JumpAddress      : std_logic_vector (31 downto 0) is s_in_IFID (95 downto 64);
-  alias a_out_ifid_JumpAddress    : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
-  alias a_in_ifid_BranchAddress     : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
-  alias a_out_ifid_BranchAddress     : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
-  
+
   -----------------------------------------------------------------------------
   -- DO WE NEED THIS IN HERE?
   -----------------------------------------------------------------------------
@@ -238,16 +242,16 @@ architecture mixed of pipe is
   --alias a_out_exmem_NextPCSource       : std_logic_vector(1 downto 0) is;
   --may not need NEXTPCSOURCE ^
   -----------------------------------------------------------------------------
- 
 
-  
+
+
   --ID/EX alias
   alias a_in_idex_Instruction         : std_logic_vector (31 downto 0) is s_in_IDEX (31 downto 0);
   alias a_out_idex_Instruction        : std_logic_vector (31 downto 0) is s_out_IDEX (31 downto 0);
   alias a_in_idex_PCplus4             : std_logic_vector (31 downto 0) is s_in_IDEX (63 downto 32);
   alias a_out_idex_PCplus4            : std_logic_vector (31 downto 0) is s_out_IDEX (63 downto 32);
-  alias a_in_idex_RegWriteEnable      : std_logic is  s_in_IDEX (64);
-  alias a_out_idex_RegWriteEnable     : std_logic is  s_out_IDEX (64);
+  alias a_in_idex_RegWriteEnable      : std_logic is s_in_IDEX (64);
+  alias a_out_idex_RegWriteEnable     : std_logic is s_out_IDEX (64);
   alias a_in_idex_RegWriteAddrSource  : std_logic_vector(1 downto 0) is s_in_IDEX (66 downto 65);
   alias a_out_idex_RegWriteAddrSource : std_logic_vector(1 downto 0) is s_out_IDEX (66 downto 65);
   alias a_in_idex_RegWriteDataSource  : std_logic_vector(1 downto 0) is s_in_IDEX (68 downto 67);
@@ -270,6 +274,13 @@ architecture mixed of pipe is
   alias a_out_idex_ALUInputBSource    : std_logic is s_out_IDEX (88);
   alias a_out_idex_RtData             : std_logic_vector(31 downto 0) is s_in_IDEX (120 downto 89);
   alias a_in_idex_RtData              : std_logic_vector(31 downto 0) is s_out_IDEX (120 downto 89);
+  --
+  alias a_in_ifid_JumpAddress         : std_logic_vector (31 downto 0) is s_in_IFID (95 downto 64);
+  alias a_out_ifid_JumpAddress        : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
+  alias a_in_ifid_BranchAddress       : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
+  alias a_out_ifid_BranchAddress      : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
+
+
 
   --EX/MEM alias
   alias a_in_exmem_Instruction         : std_logic_vector (31 downto 0) is s_in_EXMEM (31 downto 0);
@@ -338,19 +349,19 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_Cout => open);
   a_in_idex_PCplus4 <= s_PCplus4;
 
-  
+
   branch_addr_adder : fan
     port map (
       i_A    => s_BranchOffsetShifted,
       i_B    => s_PCplus4,
       i_Cin  => '0',
-      o_S    => a_in_ifid_BranchAddress,        -- s_BranchAddress
+      o_S    => a_in_ifid_BranchAddress,  -- s_BranchAddress
       o_Cout => open);
 
   instruction_memory : ram
     port map (
       i_addr  => s_CurrentPCWordAddr,
-      o_rdata => a_in_ifid_Instruction, --s_Instruction,
+      o_rdata => a_in_ifid_Instruction,  --s_Instruction,
       i_wdata => X"00000000",
       i_wen   => '0',
       i_clk   => i_clk);
@@ -388,7 +399,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
   s_CurrentPCWordAddr <= "00" & s_CurrentPC(9 downto 2);
 
-  a_in_ifid_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0); --
+  a_in_ifid_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);  --
   --s_JumpAddress
 
 
@@ -415,7 +426,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
   
-  IFID_pipereg: pipereg
+  IFID_pipereg : pipereg
     generic map (
       n => 256)
     port map (
@@ -520,7 +531,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
   
   
-  IDEX_pipereg: pipereg
+  IDEX_pipereg : pipereg
     generic map (
       n => 256)
     port map (
@@ -573,8 +584,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  
-  EXMEM_pipereg: pipereg
+
+  EXMEM_pipereg : pipereg
     generic map (
       n => 256)
     port map (
@@ -586,7 +597,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  
+
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   -- MEM STAGE
   --:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -603,7 +614,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
   
-  MEMWB_pipereg: pipereg
+  MEMWB_pipereg : pipereg
     generic map (
       n => 256)
     port map (

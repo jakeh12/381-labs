@@ -59,7 +59,7 @@ begin  -- behavioral
   s_NegFlag <= s_S(31);
   s_ZeroFlag <= '1' when s_S = X"00000000" else '0';
 
-  s_muxedInputB <= s_notB when i_BranchType = "00-" else X"00000000";
+  s_muxedInputB <= s_notB when (i_BranchType = "000" or i_BranchType = "001") else X"FFFFFFFF";
   
   s_beq  <= s_ZeroFlag;
   s_bne  <= not s_ZeroFlag;
