@@ -224,6 +224,12 @@ architecture mixed of pipe is
   alias a_out_ifid_Instruction : std_logic_vector (31 downto 0) is s_out_IFID (31 downto 0);
   alias a_in_ifid_PCplus4      : std_logic_vector (31 downto 0) is s_in_IFID (63 downto 32);
   alias a_out_ifid_PCplus4     : std_logic_vector (31 downto 0) is s_out_IFID (63 downto 32);
+  --
+  alias a_in_ifid_JumpAddress      : std_logic_vector (31 downto 0) is s_in_IFID (95 downto 64);
+  alias a_out_ifid_JumpAddress    : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
+  alias a_in_ifid_BranchAddress     : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
+  alias a_out_ifid_BranchAddress     : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
+  
   -----------------------------------------------------------------------------
   -- DO WE NEED THIS IN HERE?
   -----------------------------------------------------------------------------
@@ -328,8 +334,9 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_A    => s_CurrentPC,
       i_B    => X"00000004",
       i_Cin  => '0',
-      o_S    => s_PCplus4,
+      o_S    => s_PCplus4,              -- s_PCplus4
       o_Cout => open);
+  a_in_idex_PCplus4 <= s_PCplus4;
 
   
   branch_addr_adder : fan
@@ -337,13 +344,13 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_A    => s_BranchOffsetShifted,
       i_B    => s_PCplus4,
       i_Cin  => '0',
-      o_S    => s_BranchAddress,
+      o_S    => a_in_ifid_BranchAddress,        -- s_BranchAddress
       o_Cout => open);
 
   instruction_memory : ram
     port map (
       i_addr  => s_CurrentPCWordAddr,
-      o_rdata => s_Instruction,
+      o_rdata => a_in_ifid_Instruction, --s_Instruction,
       i_wdata => X"00000000",
       i_wen   => '0',
       i_clk   => i_clk);
@@ -381,8 +388,11 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
   s_CurrentPCWordAddr <= "00" & s_CurrentPC(9 downto 2);
 
-  s_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);
+  a_in_ifid_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0); --
+  --s_JumpAddress
 
+
+  -- TODO: needs some attention....
   s_JumpRegAddress <= s_RsReadData;
 
   -----------------------------------------------------------------------------
