@@ -29,13 +29,14 @@ architecture mixed of pipe is
          o_Q     : out std_logic_vector(n-1 downto 0));  -- Data value output
   end component;
 
+  -- OLD BRANCH CONTROL, REPLACED BY BRANCHER
   -- Branch control
-  component branch_control is
-    port (
-      i_BranchType                : in  std_logic_vector (2 downto 0);
-      i_ALUFlagZero, i_ALUFlagNeg : in  std_logic;
-      o_BranchDecision            : out std_logic);
-  end component branch_control;
+  -- component branch_control is
+  --  port (
+  --    i_BranchType                : in  std_logic_vector (2 downto 0);
+  --    i_ALUFlagZero, i_ALUFlagNeg : in  std_logic;
+  --    o_BranchDecision            : out std_logic);
+  --end component branch_control;
 
   -- N-position shifter
   component n_shifter is
@@ -481,6 +482,25 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_ALUInputBSource    => s_ALUInputBSource);
 
 
+  
+  -----------------------------------------------------------------------------
+  -- s_RegWriteAddrSource mux
+  -----------------------------------------------------------------------------
+  -- chooses the write address for the register file
+  -- 00 = Rd
+  -- 01 = Rt
+  -- 10 = $ra (for linking)
+  -- 11 = $zero or $ra (for branch linking)
+  -----------------------------------------------------------------------------
+  with s_RegWriteAddrSource select
+    s_RegWriteAddr <=
+    a_Rd                         when "00",
+    a_Rt                         when "01",
+    "11111"                      when "10",  -- $ra for linking
+    (others => s_BranchDecision) when "11",  -- $zero or $ra for branch linking
+    "00000"                      when others;  -- should never happen
+
+
   -----------------------------------------------------------------------------
   -- Brancher logic unit
   -----------------------------------------------------------------------------
@@ -760,25 +780,6 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
   
-
-  
-  -----------------------------------------------------------------------------
-  -- s_RegWriteAddrSource mux
-  -----------------------------------------------------------------------------
-  -- chooses the write address for the register file
-  -- 00 = Rd
-  -- 01 = Rt
-  -- 10 = $ra (for linking)
-  -- 11 = $zero or $ra (for branch linking)
-  -----------------------------------------------------------------------------
-  with s_RegWriteAddrSource select
-    s_RegWriteAddr <=
-    a_Rd                         when "00",
-    a_Rt                         when "01",
-    "11111"                      when "10",  -- $ra for linking
-    (others => s_BranchDecision) when "11",  -- $zero or $ra for branch linking
-    "00000"                      when others;  -- should never happen
-
 
   -----------------------------------------------------------------------------
   -- s_RegWriteDataSource mux
