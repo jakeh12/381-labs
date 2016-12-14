@@ -12,6 +12,28 @@ end entity pipe;
 -------------------------------------------------------------------------------
 architecture mixed of pipe is
 
+	--Forwarding unit
+	component forwarder is
+		port (
+			i_ID_ALUInputBSource : in std_logic;  
+			i_ID_Rs : in std_logic_vector ( 4 downto 0  );
+			i_ID_Rt : in std_logic_vector ( 4 downto 0  );
+			i_IDEX_RegWriteEnable : in std_logic;
+			i_IDEX_Rs : in std_logic_vector ( 4 downto 0  );
+			i_IDEX_Rt : in std_logic_vector ( 4 downto 0  );
+			i_IDEX_WB : in std_logic_vector ( 4 downto 0  );
+			i_EXMEM_RegWriteEnable : in std_logic;
+			i_EXMEM_RegWriteDataSource : in std_logic_vector ( 1 downto 0  );
+			i_EXMEM_Rs : in std_logic_vector ( 4 downto 0  );
+			i_EXMEM_Rt : in std_logic_vector ( 4 downto 0  );
+			i_EXMEM_WB : in std_logic_vector ( 4 downto 0  );
+			o_FWD_ID_RsSource : out std_logic_vector ( 1 downto 0  );
+			o_FWD_ID_RtSource : out std_logic_vector ( 1 downto 0  );
+			o_FWD_EX_InputASource : out std_logic;
+			o_FWD_EX_InputBSource : out std_logic 
+		     );
+	end component;
+
   -- Hazard detection unit
   component hazard is
     generic (
@@ -386,7 +408,7 @@ architecture mixed of pipe is
 
   -- Forwarding mux signals, etc...
   signal s_FWD_ID_Rs, s_FWD_ID_Rt                     : std_logic_vector (31 downto 0);
-  signal s_FWD_ID_RsSource, s_FWD_ID_RtSource         : std_logic_vector (3 downto 0);
+  signal s_FWD_ID_RsSource, s_FWD_ID_RtSource         : std_logic_vector (1  downto 0);
   signal s_FWD_EX_InputA, s_FWD_EX_InputB             : std_logic_vector (31 downto 0);
   signal s_FWD_EX_InputASource, s_FWD_EX_InputBSource : std_logic;
 
@@ -805,7 +827,6 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
 
 
-
   -----------------------------------------------------------------------------
   -- ALU
   -----------------------------------------------------------------------------
@@ -840,6 +861,30 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   a_in_exmem_MemWriteEnable     <= a_out_idex_MemWriteEnable;
   a_in_exmem_MemDataLength      <= a_out_idex_MemDataLength;
   a_in_exmem_MemDataSigned      <= a_out_idex_MemDataSigned;
+
+
+  -----------------------------------------------------------------------------
+  -- Forwarder
+  -----------------------------------------------------------------------------
+  forward : forwarder
+  port map (
+  	i_ID_ALUInputBSource => a_out_IDEX_ALUInputBSource,
+  	i_ID_Rs => a_out_IFID_Rs,
+  	i_ID_Rt => a_out_IFID_Rt,
+  	i_IDEX_RegWriteEnable => a_out_idex_RegWriteEnable,
+  	i_IDEX_Rs => a_out_IDEX_Rs,
+  	i_IDEX_Rt => a_out_idex_Rt,
+  	i_IDEX_WB => a_out_IDEX_WBAddr,
+  	i_EXMEM_RegWriteEnable => a_out_EXMEM_RegWriteEnable,
+  	i_EXMEM_RegWriteDataSource => a_out_EXMEM_RegWriteDataSource,
+  	i_EXMEM_Rs => "00000",
+  	i_EXMEM_Rt => "00000",
+  	i_EXMEM_WB => a_out_EXMEM_WBAddr,
+  	o_FWD_ID_RsSource => s_FWD_ID_RsSource,
+  	o_FWD_ID_RtSource => s_FWD_ID_RtSource, 
+  	o_FWD_EX_InputASource => s_FWD_EX_InputASource,
+  	o_FWD_EX_InputBSource => s_FWD_EX_InputBSource
+       );
 
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
