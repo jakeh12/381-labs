@@ -339,16 +339,16 @@ architecture mixed of pipe is
   alias a_out_idex_RtReadAddrSource   : std_logic is s_out_IDEX (87);
   alias a_in_idex_ALUInputBSource     : std_logic is s_in_IDEX (88);
   alias a_out_idex_ALUInputBSource    : std_logic is s_out_IDEX (88);
-  alias a_out_idex_RtData             : std_logic_vector(31 downto 0) is s_in_IDEX (120 downto 89);
-  alias a_in_idex_RtData              : std_logic_vector(31 downto 0) is s_out_IDEX (120 downto 89);
+  alias a_out_idex_RtData             : std_logic_vector(31 downto 0) is s_out_IDEX (120 downto 89);
+  alias a_in_idex_RtData              : std_logic_vector(31 downto 0) is s_in_IDEX (120 downto 89);
   alias a_in_IDEX_SignExtImmOrAddr    : std_logic_vector(31 downto 0) is s_in_IDEX(152 downto 121);
   alias a_out_IDEX_SignExtImmOrAddr   : std_logic_vector(31 downto 0) is s_out_IDEX(152 downto 121);
   alias a_out_IDEX_WBAddr             : std_logic_vector (4 downto 0) is s_out_IDEX (157 downto 153);
   alias a_in_IDEX_WBAddr              : std_logic_vector (4 downto 0) is s_in_IDEX (157 downto 153);
   alias a_out_IDEX_BranchDecision     : std_logic is s_out_IDEX (158);
   alias a_in_IDEX_BranchDecision      : std_logic is s_in_IDEX (158);
-  alias a_out_idex_RsData             : std_logic_vector(31 downto 0) is s_in_IDEX (190 downto 159);
-  alias a_in_idex_RsData              : std_logic_vector(31 downto 0) is s_out_IDEX (190 downto 159);
+  alias a_out_idex_RsData             : std_logic_vector(31 downto 0) is s_out_IDEX (190 downto 159);
+  alias a_in_idex_RsData              : std_logic_vector(31 downto 0) is s_in_IDEX (190 downto 159);
   alias a_in_IDEX_UpperImm            : std_logic_vector (31 downto 0) is s_in_IDEX (222 downto 191);
   alias a_out_IDEX_UpperImm           : std_logic_vector (31 downto 0) is s_out_IDEX (222 downto 191);
   --
@@ -412,6 +412,9 @@ architecture mixed of pipe is
   signal s_FWD_EX_InputA, s_FWD_EX_InputB             : std_logic_vector (31 downto 0);
   signal s_FWD_EX_InputASource, s_FWD_EX_InputBSource : std_logic;
 
+
+  signal peek1, peek2, peek3 : std_logic_vector (31 downto 0);
+  
   --divider registers input and output
   --alias a_in_ifid   : std_logic_vector(downto 0) is;
   --alias a_out_ifid  : std_logic_vector(downto 0) is;
@@ -646,6 +649,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
                  a_in_MEMWB_ALUResult;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   a_in_IDEX_RsData <= s_FWD_ID_Rs;
+  peek3 <= s_FWD_ID_Rs;
 
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   -----------------------------------------------------------------------------
@@ -816,6 +820,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   s_ALUInputB <= a_out_IDEX_RtData when a_out_IDEX_ALUInputBSource = '0' else a_out_IDEX_SignExtImmOrAddr;
 
+  
+  
 
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   -----------------------------------------------------------------------------
@@ -840,7 +846,9 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_Function    => a_out_IDEX_ALUFunction,
       o_ZeroFlag    => open);           -- not needed anymore (brancher)
 
-
+  peek1 <= a_in_IDEX_RsData;
+  peek2 <= a_out_IDEX_RsData;
+  
   -- OLD BRANCH CONTROL
   --branch_ctl : branch_control
   --  port map (
@@ -903,7 +911,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_Q     => s_out_EXMEM);
 
 
-
+  
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
