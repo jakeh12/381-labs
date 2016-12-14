@@ -256,8 +256,18 @@ architecture mixed of pipe is
   alias a_out_ifid_Instruction : std_logic_vector (31 downto 0) is s_out_IFID (31 downto 0);
   alias a_in_ifid_PCplus4      : std_logic_vector (31 downto 0) is s_in_IFID (63 downto 32);
   alias a_out_ifid_PCplus4     : std_logic_vector (31 downto 0) is s_out_IFID (63 downto 32);
-  --
+  -- IFID Instruction aliases
+  alias a_out_IFID_Opcode     : std_logic_vector (5 downto 0) is a_out_ifid_Instruction (31 downto 26);
+  alias a_out_IFID_Rs         : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (25 downto 21);
+  alias a_out_IFID_Rt         : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (20 downto 16);
+  alias a_out_IFID_BranchCode : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (20 downto 16);
+  alias a_out_IFID_Rd         : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (15 downto 11);
+  alias a_out_IFID_Shamt      : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (10 downto 6);
+  alias a_out_IFID_Funct      : std_logic_vector (5 downto 0) is a_out_ifid_Instruction (5 downto 0);
+  alias a_out_IFID_ImmOrAddr  : std_logic_vector (15 downto 0) is a_out_ifid_Instruction (15 downto 0);
+  alias a_out_IFID_JumpAddr   : std_logic_vector (25 downto 0) is a_out_ifid_Instruction (25 downto 0);
 
+  
   -----------------------------------------------------------------------------
   -- DO WE NEED THIS IN HERE?
   -----------------------------------------------------------------------------
@@ -303,7 +313,18 @@ architecture mixed of pipe is
   alias a_out_ifid_JumpAddress        : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
   alias a_in_ifid_BranchAddress       : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
   alias a_out_ifid_BranchAddress      : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
+  -- IDEX Instruction aliases
+  alias a_out_IDEX_Opcode     : std_logic_vector (5 downto 0) is a_out_idex_Instruction (31 downto 26);
+  alias a_out_IDEX_Rs         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (25 downto 21);
+  alias a_out_IDEX_Rt         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
+  alias a_out_IDEX_BranchCode : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
+  alias a_out_IDEX_Rd         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (15 downto 11);
+  alias a_out_IDEX_Shamt      : std_logic_vector (4 downto 0) is a_out_idex_Instruction (10 downto 6);
+  alias a_out_IDEX_Funct      : std_logic_vector (5 downto 0) is a_out_idex_Instruction (5 downto 0);
+  alias a_out_IDEX_ImmOrAddr  : std_logic_vector (15 downto 0) is a_out_idex_Instruction (15 downto 0);
+  alias a_out_IDEX_JumpAddr   : std_logic_vector (25 downto 0) is a_out_idex_Instruction (25 downto 0);
 
+  
 
 
   --EX/MEM alias
