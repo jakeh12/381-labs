@@ -88,12 +88,12 @@ begin
 		
 		--test ex rs
 		idaluinputbsource <= '0';
-		idrs <= "00001";
+		idrs <= "00011";
 		idrt <= "00000";
 		idexregwriteenable <= '1';
-		idexrs <= "00001";
+		idexrs <= "00000";
 		idexrt <= "00000";
-		idexwb <= "00001";
+		idexwb <= "00011";
 		iexmemregwriteenable <= '0';
 		iexmemregwritedatasource <="00";
 		iexmemrs <= "00000";
@@ -118,7 +118,7 @@ begin
 
 		--test mem load rs
 		idaluinputbsource <= '0';
-		idrs <= "00001";
+		idrs <= "00111";
 		idrt <= "00000";
 		idexregwriteenable <= '1';
 		idexrs <= "00000";
@@ -126,14 +126,14 @@ begin
 		idexwb <= "00000";
 		iexmemregwriteenable <= '1';
 		iexmemregwritedatasource <="01";
-		iexmemrs <= "00001";
+		iexmemrs <= "00000";
 		iexmemrt <= "00000";
-		iexmemwb <= "00000";
+		iexmemwb <= "00111";
 		wait for 10 ns;
 
 		--test mem rs
 		idaluinputbsource <= '0';
-		idrs <= "00001";
+		idrs <= "01111";
 		idrt <= "00000";
 		idexregwriteenable <= '1';
 		idexrs <= "00000";
@@ -141,11 +141,84 @@ begin
 		idexwb <= "00000";
 		iexmemregwriteenable <= '1';
 		iexmemregwritedatasource <="00";
-		iexmemrs <= "00001";
+		iexmemrs <= "00000";
+		iexmemrt <= "00000";
+		iexmemwb <= "01111";
+		wait for 10 ns;
+
+		--test fall through for rs
+		idaluinputbsource <= '0';
+		idrs <= "11111";
+		idrt <= "00000";
+		idexregwriteenable <= '1';
+		idexrs <= "00000";
+		idexrt <= "00000";
+		idexwb <= "11111";
+		iexmemregwriteenable <= '1';
+		iexmemregwritedatasource <="01";
+		iexmemrs <= "00000";
+		iexmemrt <= "00000";
+		iexmemwb <= "11111";
+		wait for 10 ns;
+
+		--nop
+		idaluinputbsource <= '0';
+		idrs <= "00000";
+		idrt <= "00000";
+		idexregwriteenable <= '0';
+		idexrs <= "00000";
+		idexrt <= "00000";
+		idexwb <= "00000";
+		iexmemregwriteenable <= '0';
+		iexmemregwritedatasource <="00";
+		iexmemrs <= "00000";
 		iexmemrt <= "00000";
 		iexmemwb <= "00000";
 		wait for 10 ns;
 
-
+		--nop
+		idaluinputbsource <= '0';
+		idrs <= "00000";
+		idrt <= "00000";
+		idexregwriteenable <= '0';
+		idexrs <= "00000";
+		idexrt <= "00000";
+		idexwb <= "00000";
+		iexmemregwriteenable <= '0';
+		iexmemregwritedatasource <="00";
+		iexmemrs <= "00000";
+		iexmemrt <= "00000";
+		iexmemwb <= "00000";
+		wait for 10 ns;
+	
+		--idex rs
+		idaluinputbsource <= '0';
+		idrs <= "00000";
+		idrt <= "00000";
+		idexregwriteenable <= '0';
+		idexrs <= "00001";
+		idexrt <= "00000";
+		idexwb <= "00000";
+		iexmemregwriteenable <= '1';
+		iexmemregwritedatasource <="01";
+		iexmemrs <= "00000";
+		iexmemrt <= "00000";
+		iexmemwb <= "00001";
+		wait for 10 ns;
+		
+		--idex rt
+		idaluinputbsource <= '0';
+		idrs <= "00000";
+		idrt <= "00000";
+		idexregwriteenable <= '0';
+		idexrs <= "00000";
+		idexrt <= "00001";
+		idexwb <= "00000";
+		iexmemregwriteenable <= '1';
+		iexmemregwritedatasource <="01";
+		iexmemrs <= "00000";
+		iexmemrt <= "00000";
+		iexmemwb <= "00001";
+		wait for 10 ns;
 	end process;
 end behavioural;

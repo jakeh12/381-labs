@@ -23,7 +23,7 @@ entity forwarder is
 
 architecture behavioural of forwarder is
 begin
-	aluInputs_forwarder: process ( i_ID_Rs, i_ID_Rt, i_IDEX_WB, i_IDEX_RegWriteEnable, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
+	aluInputs_forwarder: process ( i_IDEX_Rs, i_IDEX_Rt, i_ID_Rt, i_IDEX_WB, i_IDEX_RegWriteEnable, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
 	begin
 		--forward to ALU
 		--if mem is using a load
