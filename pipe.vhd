@@ -4,7 +4,8 @@ use ieee.std_logic_1164.all;
 -------------------------------------------------------------------------------
 entity pipe is
   generic(
-    program_file : string := "testing/r_test.mif");
+    PROGRAM_FILE : string := "testing/r_test.mif";
+    BRANCH_DELAY_SLOT : std_logic := '1');
   port (i_clk : in std_logic;
         i_rst : in std_logic);
 end entity pipe;
@@ -14,7 +15,7 @@ architecture mixed of pipe is
   -- Hazard detection unit
   component hazard is
     generic (
-      CONF_ENABLE_BRANCH_DELAY_SLOT : std_logic := '1');
+      CONF_ENABLE_BRANCH_DELAY_SLOT : std_logic := BRANCH_DELAY_SLOT);
     port (
       i_IDEX_RegWriteDataSource : in  std_logic_vector (1 downto 0);
       i_IDEX_WBAddr             : in  std_logic_vector (4 downto 0);
