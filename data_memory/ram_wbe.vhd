@@ -66,7 +66,7 @@ begin  -- architecture behavioral
   -----------------------------------------------------------------------------
 
 
-  output_rdata : process (i_addr) is --  output_rdata : process (i_clk, i_addr) is
+  output_rdata : process (i_addr, ram_block) is --  output_rdata : process (i_clk, i_addr) is
   begin
     --if rising_edge(i_clk) then
       o_rdata <= ram_block(to_integer(unsigned(i_addr)));

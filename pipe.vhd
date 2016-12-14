@@ -378,8 +378,8 @@ architecture mixed of pipe is
   alias a_out_exmem_MemDataSigned      : std_logic is s_out_EXMEM (72);
   alias a_in_exmem_ALUResult           : std_logic_vector(31 downto 0) is s_in_EXMEM (104 downto 73);
   alias a_out_exmem_ALUResult          : std_logic_vector(31 downto 0) is s_out_EXMEM (104 downto 73);
-  alias a_out_exmem_RtData             : std_logic_vector(31 downto 0) is s_in_EXMEM (136 downto 105);
-  alias a_in_exmem_RtData              : std_logic_vector(31 downto 0) is s_out_EXMEM (136 downto 105);
+  alias a_out_exmem_RtData             : std_logic_vector(31 downto 0) is s_out_EXMEM (136 downto 105);
+  alias a_in_exmem_RtData              : std_logic_vector(31 downto 0) is s_in_EXMEM (136 downto 105);
   alias a_out_EXMEM_WBAddr             : std_logic_vector (4 downto 0) is s_out_EXMEM (141 downto 137);
   alias a_in_EXMEM_WBAddr              : std_logic_vector (4 downto 0) is s_in_EXMEM (141 downto 137);
   alias a_in_EXMEM_UpperImm            : std_logic_vector (31 downto 0) is s_in_EXMEM (173 downto 142);
@@ -396,8 +396,8 @@ architecture mixed of pipe is
   alias a_out_memwb_RegWriteAddrSource : std_logic_vector(1 downto 0) is s_out_MEMWB (66 downto 65);
   alias a_in_memwb_RegWriteDataSource  : std_logic_vector(1 downto 0) is s_in_MEMWB (68 downto 67);
   alias a_out_memwb_RegWriteDataSource : std_logic_vector(1 downto 0) is s_out_MEMWB (68 downto 67);
-  alias a_out_memwb_MemReadData        : std_logic_vector(31 downto 0) is s_in_MEMWB (100 downto 69);
-  alias a_in_memwb_MemReadData         : std_logic_vector(31 downto 0) is s_out_MEMWB (100 downto 69);
+  alias a_out_memwb_MemReadData        : std_logic_vector(31 downto 0) is s_out_MEMWB (100 downto 69);
+  alias a_in_memwb_MemReadData         : std_logic_vector(31 downto 0) is s_in_MEMWB (100 downto 69);
   alias a_in_memwb_ALUResult           : std_logic_vector(31 downto 0) is s_in_MEMWB (132 downto 101);
   alias a_out_memwb_ALUResult          : std_logic_vector(31 downto 0) is s_out_MEMWB (132 downto 101);
   alias a_out_MEMWB_WBAddr             : std_logic_vector (4 downto 0) is s_out_MEMWB (137 downto 133);
@@ -649,8 +649,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
                  a_in_MEMWB_ALUResult;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   a_in_IDEX_RsData <= s_FWD_ID_Rs;
-  peek3 <= s_FWD_ID_Rs;
-
+  
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   -----------------------------------------------------------------------------
   -- s_FWD_ID_RtSource forwarding mux
@@ -846,8 +845,6 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_Function    => a_out_IDEX_ALUFunction,
       o_ZeroFlag    => open);           -- not needed anymore (brancher)
 
-  peek1 <= a_in_IDEX_RsData;
-  peek2 <= a_out_IDEX_RsData;
   
   -- OLD BRANCH CONTROL
   --branch_ctl : branch_control
@@ -946,6 +943,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_clk    => i_Clk,
       o_rdata  => a_in_MEMWB_MemReadData);
 
+  peek1 <= a_in_EXMEM_RtData;
 
   -- forward from previous stage to this stage
   a_in_MEMWB_PCplus4            <= a_out_EXMEM_PCplus4;
