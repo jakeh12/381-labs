@@ -235,6 +235,12 @@ architecture mixed of pipe is
   signal s_UpperImm : std_logic_vector (31 downto 0);
 
 
+  -- Hazard detection signals
+  signal s_Flush : std_logic;
+  signal s_FlushOrReset : std_logic;
+  signal s_Stall : std_logic;
+  signal s_notStall : std_logic;
+  
   -- Pipeline register signals
   signal s_IFID_Flush, s_IDEX_Flush, s_EXMEM_Flush, s_MEMWB_Flush : std_logic;
   signal s_IFID_Stall, s_IDEX_Stall, s_EXMEM_Stall, s_MEMWB_Stall : std_logic;
@@ -398,13 +404,16 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_wen   => '0',
       i_clk   => i_clk);
 
+
+  -- not stall for WEN of PC
+  s_notStall <= not s_Stall;
   -----------------------------------------------------------------------------
   -- Program Counter (PC)
   -----------------------------------------------------------------------------
   program_counter : reg
     port map (
       i_wdata => s_NextPC,
-      i_wen   => '1',
+      i_wen   => s_notStall,
       o_rdata => s_CurrentPC,
       i_rst   => i_rst,
       i_clk   => i_clk);
@@ -440,7 +449,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-
+  -- we also need to flush on reset so (flush or reset)
+  s_FlushOrReset <= s_Flush or i_rst;
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
   -- IF/ID pipeline register
@@ -451,8 +461,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       n => 256)
     port map (
       i_CLK   => i_clk,
-      i_FLUSH => s_IFID_Flush,
-      i_STALL => s_IFID_Stall,
+      i_FLUSH => s_FlushOrReset,
+      i_STALL => s_Stall,
       i_D     => s_in_IFID,
       o_Q     => s_out_IFID);
 
@@ -682,8 +692,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       n => 256)
     port map (
       i_CLK   => i_clk,
-      i_FLUSH => s_IDEX_Flush,
-      i_STALL => s_IDEX_Stall,
+      i_FLUSH => i_rst,
+      i_STALL => '0',
       i_D     => s_in_IDEX,
       o_Q     => s_out_IDEX);
 
@@ -779,8 +789,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       n => 256)
     port map (
       i_CLK   => i_clk,
-      i_FLUSH => s_EXMEM_Flush,
-      i_STALL => s_EXMEM_Stall,
+      i_FLUSH => i_rst,
+      i_STALL => '0',
       i_D     => s_in_EXMEM,
       o_Q     => s_out_EXMEM);
 
@@ -831,8 +841,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       n => 256)
     port map (
       i_CLK   => i_clk,
-      i_FLUSH => s_MEMWB_Flush,
-      i_STALL => s_MEMWB_Stall,
+      i_FLUSH => i_rst,
+      i_STALL => '0',
       i_D     => s_in_MEMWB,
       o_Q     => s_out_MEMWB);
 
