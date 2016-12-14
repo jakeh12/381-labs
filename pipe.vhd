@@ -282,6 +282,17 @@ architecture mixed of pipe is
   --ID/EX alias
   alias a_in_idex_Instruction         : std_logic_vector (31 downto 0) is s_in_IDEX (31 downto 0);
   alias a_out_idex_Instruction        : std_logic_vector (31 downto 0) is s_out_IDEX (31 downto 0);
+  -- IDEX Instruction aliases
+  alias a_out_IDEX_Opcode     : std_logic_vector (5 downto 0) is a_out_idex_Instruction (31 downto 26);
+  alias a_out_IDEX_Rs         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (25 downto 21);
+  alias a_out_IDEX_Rt         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
+  alias a_out_IDEX_BranchCode : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
+  alias a_out_IDEX_Rd         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (15 downto 11);
+  alias a_out_IDEX_Shamt      : std_logic_vector (4 downto 0) is a_out_idex_Instruction (10 downto 6);
+  alias a_out_IDEX_Funct      : std_logic_vector (5 downto 0) is a_out_idex_Instruction (5 downto 0);
+  alias a_out_IDEX_ImmOrAddr  : std_logic_vector (15 downto 0) is a_out_idex_Instruction (15 downto 0);
+  alias a_out_IDEX_JumpAddr   : std_logic_vector (25 downto 0) is a_out_idex_Instruction (25 downto 0);
+  --
   alias a_in_idex_PCplus4             : std_logic_vector (31 downto 0) is s_in_IDEX (63 downto 32);
   alias a_out_idex_PCplus4            : std_logic_vector (31 downto 0) is s_out_IDEX (63 downto 32);
   alias a_in_idex_RegWriteEnable      : std_logic is s_in_IDEX (64);
@@ -308,22 +319,16 @@ architecture mixed of pipe is
   alias a_out_idex_ALUInputBSource    : std_logic is s_out_IDEX (88);
   alias a_out_idex_RtData             : std_logic_vector(31 downto 0) is s_in_IDEX (120 downto 89);
   alias a_in_idex_RtData              : std_logic_vector(31 downto 0) is s_out_IDEX (120 downto 89);
+  alias a_in_IDEX_SignExtImmOrAddr    : std_logic_vector(31 downto 0) is s_in_IDEX(152 downto 121);
+  alias a_out_IDEX_SignExtImmOrAddr   :	std_logic_vector(31 downto 0) is s_out_IDEX(152 downto 121);
+  alias a_out_IDEX_WBAddr : std_logic_vector (4 downto 0) is s_out_IDEX (157 downto 153);
+  alias a_in_IDEX_WBAddr : std_logic_vector (4 downto 0) is s_in_IDEX (157 downto 153);
+  
   --
-  alias a_in_ifid_JumpAddress         : std_logic_vector (31 downto 0) is s_in_IFID (95 downto 64);
-  alias a_out_ifid_JumpAddress        : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
-  alias a_in_ifid_BranchAddress       : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
-  alias a_out_ifid_BranchAddress      : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
-  -- IDEX Instruction aliases
-  alias a_out_IDEX_Opcode     : std_logic_vector (5 downto 0) is a_out_idex_Instruction (31 downto 26);
-  alias a_out_IDEX_Rs         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (25 downto 21);
-  alias a_out_IDEX_Rt         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
-  alias a_out_IDEX_BranchCode : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
-  alias a_out_IDEX_Rd         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (15 downto 11);
-  alias a_out_IDEX_Shamt      : std_logic_vector (4 downto 0) is a_out_idex_Instruction (10 downto 6);
-  alias a_out_IDEX_Funct      : std_logic_vector (5 downto 0) is a_out_idex_Instruction (5 downto 0);
-  alias a_out_IDEX_ImmOrAddr  : std_logic_vector (15 downto 0) is a_out_idex_Instruction (15 downto 0);
-  alias a_out_IDEX_JumpAddr   : std_logic_vector (25 downto 0) is a_out_idex_Instruction (25 downto 0);
-
+  --alias a_in_ifid_JumpAddress         : std_logic_vector (31 downto 0) is s_in_IFID (95 downto 64);
+  --alias a_out_ifid_JumpAddress        : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
+  --alias a_in_ifid_BranchAddress       : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
+  --alias a_out_ifid_BranchAddress      : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
   
 
 
@@ -441,14 +446,6 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  -----------------------------------------------------------------------------
-  -- Immediate value signed extender
-  -----------------------------------------------------------------------------
-  imm_sign_ext : extender
-    port map (
-      i_isSigned => '1',
-      i_small    => a_ImmOrAddr,
-      o_big      => s_SignExtImmOrAddr);
 
 
   -----------------------------------------------------------------------------
@@ -516,18 +513,19 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   main_control : mips_control
     port map(
-      i_instruction        => s_Instruction,
-      o_RegWriteEnable     => s_RegWriteEnable,
-      o_MemWriteEnable     => s_MemWriteEnable,
-      o_ALUFunction        => s_ALUFunction,
-      o_BranchType         => s_BranchType,
-      o_MemDataLength      => s_MemDataLength,
-      o_MemDataSigned      => s_MemDataSigned,
-      o_NextPCSource       => s_NextPCSource,
-      o_RegWriteAddrSource => s_RegWriteAddrSource,
-      o_RegWriteDataSource => s_RegWriteDataSource,
-      o_RtReadAddrSource   => s_RtReadAddrSource,
-      o_ALUInputBSource    => s_ALUInputBSource);
+      i_instruction        => a_out_IFID_Instruction,
+      o_RegWriteEnable     => a_in_IDEX_RegWriteEnable,
+      o_MemWriteEnable     => a_in_IDEX_MemWriteEnable,
+      o_ALUFunction        => a_in_IDEX_ALUFunction,
+      o_BranchType         => a_in_IDEX_BranchType,
+      o_MemDataLength      => a_in_IDEX_MemDataLength,
+      o_MemDataSigned      => a_in_IDEX_MemDataSigned,
+      o_NextPCSource       => a_in_IDEX_NextPCSource,
+      o_RegWriteAddrSource => a_in_IDEX_RegWriteAddrSource,
+      o_RegWriteDataSource => a_in_IDEX_RegWriteDataSource,
+      o_RtReadAddrSource   => open,     -- used to be there to support the
+                                        -- weird branch instructions
+      o_ALUInputBSource    => s_in_IDEX_ALUInputBSource);
 
 
   -----------------------------------------------------------------------------
@@ -537,16 +535,25 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
     generic map (
       CONF_ENABLE_BRANCH_DELAY_SLOT => '1')
     port map (
-      i_IDEX_RegWriteDataSource => a_out_idex_RegWriteDataSource,
-      i_IDEX_WBAddr             => s_IDEX_WBAddr,
-      i_IFID_RsAddr             => s_IFID_RsAddr,
-      i_IFID_RtAddr             => s_IFID_RtAddr,
-      i_ID_ALUInputBSource      => a_out_idex_ALUInputBSource,
-      i_IDEX_NextPCSource       => a_out_idex_NextPCSource,
+      i_IDEX_RegWriteDataSource => a_out_IDEX_RegWriteDataSource,
+      i_IDEX_WBAddr             => a_out_IDEX_WBAddr,
+      i_IFID_RsAddr             => a_out_IFID_Rs,
+      i_IFID_RtAddr             => a_out_IFID_Rt,
+      i_ID_ALUInputBSource      => a_out_IDEX_ALUInputBSource,
+      i_IDEX_NextPCSource       => a_out_IDEX_NextPCSource,
       i_IDEX_BranchDecision     => s_IDEX_BranchDecision,
       o_Stall                   => s_Stall,
       o_Flush                   => s_Flush);
 
+
+  -----------------------------------------------------------------------------
+  -- Immediate value signed extender
+  -----------------------------------------------------------------------------
+  imm_sign_ext : extender
+    port map (
+      i_isSigned => '1',
+      i_small    => a_out_IFID_ImmOrAddr,
+      o_big      => a_in_IDEX_SignExtImmOrAddr);  -- s_SignExtImmOrAddr
 
   -----------------------------------------------------------------------------
   -- s_RegWriteAddrSource mux
@@ -558,9 +565,9 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- 11 = $zero or $ra (for branch linking)
   -----------------------------------------------------------------------------
   with s_RegWriteAddrSource select
-    s_RegWriteAddr <=
-    a_Rd                         when "00",
-    a_Rt                         when "01",
+    a_in_IDEX_WBAddr <=
+    a_out_IFID_Rd                         when "00",
+    a_out_IFID_Rt                         when "01",
     "11111"                      when "10",  -- $ra for linking
     (others => s_BranchDecision) when "11",  -- $zero or $ra for branch linking
     "00000"                      when others;  -- should never happen
