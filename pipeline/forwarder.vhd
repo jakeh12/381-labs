@@ -46,7 +46,7 @@ begin
 	rs_forwarder: process ( i_ID_Rs, i_IDEX_WB, i_IDEX_RegWriteEnable, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
 	begin
 		--if rs is the zero register
-	--	if i_ID_Rs = "00000" then o_FWD_ID_RsSource <= "00";
+		if i_ID_Rs = "00000" then o_FWD_ID_RsSource <= "00";
 		--if rs matches the write back of idex
 		elsif i_ID_Rs = i_IDEX_WB and i_IDEX_RegWriteEnable = '1' then o_FWD_ID_RsSource <= "01";
 		--if rs matches the writeback of exmem and exmem is a load instruction
