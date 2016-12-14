@@ -411,6 +411,19 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_Cout => open);
   a_in_idex_PCplus4 <= s_PCplus4;
 
+  
+  -- not stall for WEN of PC
+  s_notStall <= not s_Stall;
+  -----------------------------------------------------------------------------
+  -- Program Counter (PC)
+  -----------------------------------------------------------------------------
+  program_counter : reg
+    port map (
+      i_wdata => s_NextPC,
+      i_wen   => s_notStall,
+      o_rdata => s_CurrentPC,
+      i_rst   => i_rst,
+      i_clk   => i_clk);
 
   -- offsetting the address to match input size of our instruction memory
   s_CurrentPCWordAddr <= "00" & s_CurrentPC(9 downto 2);
@@ -426,19 +439,6 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_wen   => '0',
       i_clk   => i_clk);
 
-
-  -- not stall for WEN of PC
-  s_notStall <= not s_Stall;
-  -----------------------------------------------------------------------------
-  -- Program Counter (PC)
-  -----------------------------------------------------------------------------
-  program_counter : reg
-    port map (
-      i_wdata => s_NextPC,
-      i_wen   => s_notStall,
-      o_rdata => s_CurrentPC,
-      i_rst   => i_rst,
-      i_clk   => i_clk);
 
 
   -----------------------------------------------------------------------------
