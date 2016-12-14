@@ -1,0 +1,57 @@
+[*]
+[*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
+[*] Wed Dec 14 07:30:56 2016
+[*]
+[dumpfile] "/Users/jhladik/cpre381-labs/pipe_tb.vcd"
+[dumpfile_mtime] "Wed Dec 14 07:28:53 2016"
+[dumpfile_size] 2231405
+[savefile] "/Users/jhladik/cpre381-labs/pipeline1.gtkw"
+[timestart] 0
+[size] 1280 695
+[pos] -1 -1
+*-23.998177 16250000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] dut.
+[sst_width] 268
+[signals_width] 271
+[sst_expanded] 1
+[sst_vpaned_height] 202
+@28
+s_clk
+s_rst
+dut.s_stall
+dut.s_flush
+@200
+-IF/ID
+@22
+dut.ifid_pipereg.i_d[255:0]
+dut.ifid_pipereg.o_q[255:0]
+@200
+-ID/EX
+@22
+dut.idex_pipereg.i_d[255:0]
+dut.idex_pipereg.o_q[255:0]
+@200
+-Fetch
+@29
+dut.main_control.o_nextpcsource[1:0]
+@22
+dut.program_counter.o_rdata[31:0]
+dut.program_counter.i_wdata[31:0]
+dut.instruction_memory.o_rdata[31:0]
+dut.pc_plus_4_adder.o_s[31:0]
+dut.s_currentpc[31:0]
+@c00028
+dut.s_nextpcsource[1:0]
+@28
+(0)dut.s_nextpcsource[1:0]
+(1)dut.s_nextpcsource[1:0]
+@1401200
+-group_end
+@28
+dut.forward.o_fwd_ex_inputasource
+dut.forward.o_fwd_ex_inputbsource
+dut.forward.o_fwd_id_rssource[1:0]
+dut.forward.o_fwd_id_rtsource[1:0]
+dut.main_control.o_nextpcsource[1:0]
+[pattern_trace] 1
+[pattern_trace] 0

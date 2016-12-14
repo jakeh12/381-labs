@@ -456,7 +456,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_Cin  => '0',
       o_S    => s_PCplus4,              -- s_PCplus4
       o_Cout => open);
-  a_in_idex_PCplus4 <= s_PCplus4;
+  a_in_IFID_PCplus4 <= s_PCplus4;
 
 
   -- not stall for WEN of PC
@@ -569,6 +569,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
                                         -- weird branch instructions
       o_ALUInputBSource    => a_in_IDEX_ALUInputBSource);
 
+  s_NextPCSource <= a_in_IDEX_NextPCSource;
 
   -----------------------------------------------------------------------------
   -- Hazard Detection Unit
