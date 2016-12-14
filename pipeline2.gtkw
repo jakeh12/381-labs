@@ -1,0 +1,70 @@
+[*]
+[*] GTKWave Analyzer v3.3.76 (w)1999-2016 BSI
+[*] Wed Dec 14 09:49:16 2016
+[*]
+[dumpfile] "/Users/jhladik/cpre381-labs/pipe_tb.vcd"
+[dumpfile_mtime] "Wed Dec 14 09:48:50 2016"
+[dumpfile_size] 1276379
+[savefile] "/Users/jhladik/cpre381-labs/pipeline2.gtkw"
+[timestart] 0
+[size] 1280 694
+[pos] -1 -1
+*-26.114944 16300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] dut.
+[treeopen] dut.data_memory.
+[treeopen] dut.register_file.(31).B1.
+[sst_width] 268
+[signals_width] 268
+[sst_expanded] 1
+[sst_vpaned_height] 337
+@28
+s_clk
+s_rst
+@29
+dut.s_stall
+@28
+dut.s_flush
+@200
+-Instruction
+@22
+dut.program_counter.o_rdata[31:0]
+dut.instruction_memory.o_rdata[31:0]
+@200
+-Register File
+@22
+dut.register_file.(31).B1.reg_i.o_q[31:0]
+@28
+dut.register_file.i_clk
+@22
+dut.register_file.i_raddr1[4:0]
+dut.register_file.i_raddr2[4:0]
+@28
+dut.register_file.i_rst
+@22
+dut.register_file.i_waddr[4:0]
+dut.register_file.i_wdata[31:0]
+@28
+dut.register_file.i_wenable
+@22
+dut.register_file.o_rdata1[31:0]
+dut.register_file.o_rdata2[31:0]
+@200
+-Data Memory
+@22
+dut.data_memory.i_addr[31:0]
+@28
+dut.data_memory.i_clk
+dut.data_memory.i_signed
+dut.data_memory.i_size[1:0]
+@22
+dut.data_memory.i_wdata[31:0]
+@28
+dut.data_memory.i_wen
+@22
+dut.data_memory.o_rdata[31:0]
+dut.data_memory.s_address[13:0]
+dut.data_memory.s_byteena[3:0]
+dut.data_memory.s_data[31:0]
+dut.data_memory.s_q[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
