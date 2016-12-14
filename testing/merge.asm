@@ -17,7 +17,9 @@
 		# 4 1 3 2
 		# _ _ 
 		lw $t0, 0($a0)
+		nop
 		lw $t1, 4($a0)
+		nop
 		slt $t2, $t0, $t1 # 4 < 1 ?
 		beq $t2, $zero, swap_1
 		j continue_1
@@ -30,7 +32,9 @@ continue_1:
 		# 1 4 3 2
 		#     _ _ 
 		lw $t0, 8($a0)
+		nop
 		lw $t1, 12($a0)
+		nop
 		slt $t2, $t0, $t1 # 3 < 2 ?
 		beq $t2, $zero, swap_2
 		j continue_2
@@ -56,7 +60,9 @@ continue_2:
 	
 loop:		beq $s0, $zero, store_very_last	
 		lw $t3, 0($t0) # dereference left
+		nop
 		lw $t4, 0($t1)	# dereference right
+		nop
 		slt $t5, $t3, $t4 # 1 < 2 ?
 		beq $t5, $zero, store_right
 		sw $t3, 0($t2) # store left first
@@ -88,9 +94,13 @@ store_very_last_left:
 		
 done:		
 		lw $s0, 0($a1)
+		nop
 		lw $s1, 4($a1)
+		nop
 		lw $s2, 8($a1)
+		nop
 		lw $s3, 12($a1)
+		nop
 infinite:		
 		j infinite
 		
