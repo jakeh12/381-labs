@@ -25,6 +25,25 @@ entity forwarder is
 
 architecture behavioural of forwarder is
 begin
+	aluInputs_forwarder: process ( i_ID_Rt, i_IDEX_WB, i_IDEX_ReWriteEnable, i_IDEX_RegWriteDataSource, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
+	begin
+		--forward to ALU
+		--if mem is using a load
+		if i_EXMEM_RegWriteDataSource = "01" then
+			if i_IDEX_Rs = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' then o_FWD_EX_InputASource = '1';
+			else o_FWD_EX_InputASource = '0';
+			end if;
+
+			if i_IDEX_Rt = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' then o_FWD_EX_InputBSource = '1';
+			else o_FWD_EX_InputBSource = '0';
+			end if;
+		-- if it is not a load then all info should have already been forwarded in previous stage
+		else 
+			o_FWD_EX_InputASource = '0';
+			o_FWD_EX_InputBSource = '0';
+		end if;
+	
+
 	rs_forwarder: process ( i_ID_Rs, i_IDEX_WB, i_IDEX_ReWriteEnable, i_IDEX_RegWriteDataSource, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
 	begin
 		--if rs is the zero register
@@ -35,6 +54,7 @@ begin
 		elsif i_ID_Rs = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' and i_EXMEM_RegWriteDataSource = "01" then o_FWD_ID_RsSource = "10";
 		--if rs matches the writeback of exmem and exmem is NOT a load
 		elsif i_ID_Rs = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' then o_FWD_ID_RsSource = "11";
+		--else dont forward
 		else o_FWD_ID_RsSource = "00";
 		end if;
 	end rs_forwarder;
@@ -52,26 +72,10 @@ begin
 		elsif i_ID_Rt = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' and i_EXMEM_RegWriteDataSource = "01"then o_FWD_ID_RtSource = "10";
 		--if rt matches wb of exmem and is NOT a load
 		elsif i_ID_Rt = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' then o_FWD_ID_RtSource = "11";
+		--else dont forward
 		else o_FWD_ID_RtSource = "00";
 		end if;
 	end rt_forwarder;
 
-		--forward to ALU
-		--if mem is using a loa
-		if i_EXMEM_RegWriteDataSource = "01" then
-			if i_IDEX_Rs = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' then o_FWD_EX_InputASource = '1';
-			else o_FWD_EX_InputASource = '0';
-			end if;
 
-			if i_IDEX_Rt = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' then o_FWD_EX_InputBSource = '1';
-			else o_FWD_EX_InputBSource = '0';
-			end if;
-		else 
-			o_FWD_EX_InputASource = '0';
-			o_FWD_EX_InputBSource = '0';
-		end if;
-
-
-	
-
-
+end behavioural;
