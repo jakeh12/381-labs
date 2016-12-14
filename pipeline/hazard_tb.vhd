@@ -25,7 +25,7 @@ architecture behavioral of hazard_tb is
 
   signal s_IDEX_RegWriteDataSource, s_IDEX_NextPCSource               : std_logic_vector (1 downto 0);
   signal s_IDEX_WBAddr, s_IFID_RsAddr, s_IFID_RtAddr                  : std_logic_vector (4 downto 0);
-  signal s_ID_ALUInputSource, s_IDEX_BranchDecision, s_Stall, s_Flush : std_logic;
+  signal s_ID_ALUInputBSource, s_IDEX_BranchDecision, s_Stall, s_Flush : std_logic;
   
   
 begin  -- behavioral
@@ -33,7 +33,7 @@ begin  -- behavioral
 
   DUT : hazard
     generic map (
-      CONF_ENABLE_BRACH_DELAY_SLOT => '0')
+      CONF_ENABLE_BRANCH_DELAY_SLOT => '1')
     port map (
       i_IDEX_RegWriteDataSource => s_IDEX_RegWriteDataSource,
       i_IDEX_WBAddr             => s_IDEX_WBAddr,
@@ -54,6 +54,89 @@ begin  -- behavioral
     s_IFID_RsAddr             <= "00000";
     s_IFID_RtAddr             <= "00000";
     s_ID_ALUInputBSource      <= '0';
+    s_IDEX_NextPCSource       <= "00";
+    s_IDEX_BranchDecision     <= '0';
+    wait for 10 ns;
+
+
+    -- j label
+    s_IDEX_RegWriteDataSource <= "00";
+    s_IDEX_WBAddr             <= "00000";
+    s_IFID_RsAddr             <= "00000";
+    s_IFID_RtAddr             <= "00000";
+    s_ID_ALUInputBSource      <= '0';
+    s_IDEX_NextPCSource       <= "01";
+    s_IDEX_BranchDecision     <= '0';
+    wait for 10 ns;
+
+
+    -- jr $reg
+    s_IDEX_RegWriteDataSource <= "00";
+    s_IDEX_WBAddr             <= "00000";
+    s_IFID_RsAddr             <= "00000";
+    s_IFID_RtAddr             <= "00000";
+    s_ID_ALUInputBSource      <= '0';
+    s_IDEX_NextPCSource       <= "10";
+    s_IDEX_BranchDecision     <= '0';
+    wait for 10 ns;
+
+
+    -- false branch (no flush)
+    s_IDEX_RegWriteDataSource <= "00";
+    s_IDEX_WBAddr             <= "00000";
+    s_IFID_RsAddr             <= "00000";
+    s_IFID_RtAddr             <= "00000";
+    s_ID_ALUInputBSource      <= '0';
+    s_IDEX_NextPCSource       <= "11";
+    s_IDEX_BranchDecision     <= '0';
+    wait for 10 ns;
+
+
+    -- true branch (flush)
+    s_IDEX_RegWriteDataSource <= "00";
+    s_IDEX_WBAddr             <= "00000";
+    s_IFID_RsAddr             <= "00000";
+    s_IFID_RtAddr             <= "00000";
+    s_ID_ALUInputBSource      <= '0';
+    s_IDEX_NextPCSource       <= "11";
+    s_IDEX_BranchDecision     <= '1';
+    wait for 10 ns;
+
+
+    -- load-use hazard
+    -- lw $reg
+    -- add $some, $reg, $reg
+    s_IDEX_RegWriteDataSource <= "01";
+    s_IDEX_WBAddr             <= "10000";
+    s_IFID_RsAddr             <= "10000";
+    s_IFID_RtAddr             <= "00000";
+    s_ID_ALUInputBSource      <= '0';
+    s_IDEX_NextPCSource       <= "00";
+    s_IDEX_BranchDecision     <= '0';
+    wait for 10 ns;
+
+
+    -- load-use hazard
+    -- lw $reg
+    -- addi $some, $some, 1000
+    s_IDEX_RegWriteDataSource <= "01";
+    s_IDEX_WBAddr             <= "10000";
+    s_IFID_RsAddr             <= "00000";
+    s_IFID_RtAddr             <= "10000";
+    s_ID_ALUInputBSource      <= '1';
+    s_IDEX_NextPCSource       <= "00";
+    s_IDEX_BranchDecision     <= '0';
+    wait for 10 ns;
+
+
+    -- load-use hazard
+    -- lw $reg
+    -- addi $some, $reg, 1000
+    s_IDEX_RegWriteDataSource <= "01";
+    s_IDEX_WBAddr             <= "10000";
+    s_IFID_RsAddr             <= "10000";
+    s_IFID_RtAddr             <= "00000";
+    s_ID_ALUInputBSource      <= '1';
     s_IDEX_NextPCSource       <= "00";
     s_IDEX_BranchDecision     <= '0';
     wait for 10 ns;

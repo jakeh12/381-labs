@@ -11,6 +11,22 @@ end entity pipe;
 -------------------------------------------------------------------------------
 architecture mixed of pipe is
 
+  -- Hazard detection unit
+  component hazard is
+    generic (
+      CONF_ENABLE_BRANCH_DELAY_SLOT : std_logic := '1');
+    port (
+      i_IDEX_RegWriteDataSource : in  std_logic_vector (1 downto 0);
+      i_IDEX_WBAddr             : in  std_logic_vector (4 downto 0);
+      i_IFID_RsAddr             : in  std_logic_vector (4 downto 0);
+      i_IFID_RtAddr             : in  std_logic_vector (4 downto 0);
+      i_ID_ALUInputBSource      : in  std_logic;
+      i_IDEX_NextPCSource       : in  std_logic_vector (1 downto 0);
+      i_IDEX_BranchDecision     : in  std_logic;
+      o_Stall                   : out std_logic;
+      o_Flush                   : out std_logic);
+  end component;
+
   -- Branch logic unit
   component brancher
     port (
@@ -354,7 +370,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
-  
+
   -----------------------------------------------------------------------------
   -- PC+4 adder
   -----------------------------------------------------------------------------  
@@ -367,7 +383,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_Cout => open);
   a_in_idex_PCplus4 <= s_PCplus4;
 
-    
+
   -- offsetting the address to match input size of our instruction memory
   s_CurrentPCWordAddr <= "00" & s_CurrentPC(9 downto 2);
 
@@ -393,7 +409,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_rst   => i_rst,
       i_clk   => i_clk);
 
-  
+
   -----------------------------------------------------------------------------
   -- Immediate value signed extender
   -----------------------------------------------------------------------------
@@ -403,7 +419,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_small    => a_ImmOrAddr,
       o_big      => s_SignExtImmOrAddr);
 
-  
+
   -----------------------------------------------------------------------------
   -- s_NextPCSource mux
   -----------------------------------------------------------------------------
@@ -424,7 +440,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  
+
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
   -- IF/ID pipeline register
@@ -462,7 +478,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
 
 
-  
+
   -----------------------------------------------------------------------------
   -- Main Control
   -----------------------------------------------------------------------------
@@ -482,7 +498,24 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_ALUInputBSource    => s_ALUInputBSource);
 
 
-  
+  -----------------------------------------------------------------------------
+  -- Hazard Detection Unit
+  -----------------------------------------------------------------------------
+  hazard_detection_unit : hazard
+    generic map (
+      CONF_ENABLE_BRANCH_DELAY_SLOT => '1')
+    port map (
+      i_IDEX_RegWriteDataSource => s_IDEX_RegWriteDataSource,
+      i_IDEX_WBAddr             => s_IDEX_WBAddr,
+      i_IFID_RsAddr             => s_IFID_RsAddr,
+      i_IFID_RtAddr             => s_IFID_RtAddr,
+      i_ID_ALUInputBSource      => s_ID_ALUInputBSource,
+      i_IDEX_NextPCSource       => s_IDEX_NextPCSource,
+      i_IDEX_BranchDecision     => s_IDEX_BranchDecision,
+      o_Stall                   => s_Stall,
+      o_Flush                   => s_Flush);
+
+
   -----------------------------------------------------------------------------
   -- s_RegWriteAddrSource mux
   -----------------------------------------------------------------------------
@@ -504,13 +537,13 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   -- Brancher logic unit
   -----------------------------------------------------------------------------
-  branching_logic: brancher
+  branching_logic : brancher
     port map (
       i_A              => s_RsReadData,
       i_B              => s_RtReadData,
       i_BranchType     => s_BranchType,
       o_BranchDecision => s_BranchDecision);
-  
+
 
   -----------------------------------------------------------------------------
   -- BranchDecisionAddress mux
@@ -521,7 +554,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   s_BranchDecisionAddress <= s_PCplus4 when s_BranchDecision = '0' else s_BranchAddress;
 
 
-  
+
   -----------------------------------------------------------------------------
   -- Branch address shifter (two left)
   -----------------------------------------------------------------------------
@@ -543,7 +576,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_S    => a_in_ifid_BranchAddress,  -- s_BranchAddress
       o_Cout => open);
 
-  
+
   -- Jump address dummy matching bit size for input into a shifter
   s_JumpAddrExtended <= "000000" & a_JumpAddr;
 
@@ -558,7 +591,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_F   => s_JumpAddrShifted);
 
 
-    
+
   -- final calculated jump address
   a_in_ifid_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);  --
   --s_JumpAddress
@@ -570,7 +603,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  
+
   -----------------------------------------------------------------------------
   -- Upper immediate shifter (sixteen left)
   -----------------------------------------------------------------------------
@@ -594,7 +627,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   s_FWD_ID_RsSource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
 
-  
+
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   -----------------------------------------------------------------------------
   -- s_FWD_ID_RtSource forwarding mux
@@ -605,7 +638,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   s_FWD_ID_RtSource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
 
-  
+
   -- OLD RtReadAddr mux -- DO NOT NEED IT ANYMORE -- REPLACED BY Brancher unit
   -----------------------------------------------------------------------------
   -- s_RtReadAddrSource mux
@@ -618,7 +651,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  
+
 
   -----------------------------------------------------------------------------
   -- Register File
@@ -637,8 +670,8 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-  
-  
+
+
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
   -- ID/EX pipeline register
@@ -677,7 +710,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
 
 
-  
+
   -----------------------------------------------------------------------------
   -- s_ALUInputBSource mux
   -----------------------------------------------------------------------------
@@ -698,7 +731,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   s_FWD_EX_InputASource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
 
-  
+
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   -----------------------------------------------------------------------------
   -- s_FWD_EX_InputBSource forwarding mux
@@ -708,9 +741,9 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   s_FWD_EX_InputBSource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
-  
 
-  
+
+
   -----------------------------------------------------------------------------
   -- ALU
   -----------------------------------------------------------------------------
@@ -723,7 +756,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_Function    => s_ALUFunction,
       o_ZeroFlag    => s_ALUFlagZero);
 
-  
+
   -- OLD BRANCH CONTROL
   --branch_ctl : branch_control
   --  port map (
@@ -731,7 +764,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   --    i_ALUFlagZero    => s_ALUFlagZero,
   --    i_ALUFlagNeg     => s_ALUResult(31),
   --    o_BranchDecision => s_BranchDecision);
-  
+
 
 
 
@@ -773,7 +806,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
 
 
-  
+
   -----------------------------------------------------------------------------
   -- Data memory
   -----------------------------------------------------------------------------
@@ -825,7 +858,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
   -----------------------------------------------------------------------------
-  
+
 
   -----------------------------------------------------------------------------
   -- s_RegWriteDataSource mux
