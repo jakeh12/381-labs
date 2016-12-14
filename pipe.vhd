@@ -4,7 +4,7 @@ use ieee.std_logic_1164.all;
 -------------------------------------------------------------------------------
 entity pipe is
   generic(
-    PROGRAM_FILE : string := "testing/r_test.mif";
+    PROGRAM_FILE      : string    := "testing/r_test.mif";
     BRANCH_DELAY_SLOT : std_logic := '1');
   port (i_clk : in std_logic;
         i_rst : in std_logic);
@@ -237,11 +237,11 @@ architecture mixed of pipe is
 
 
   -- Hazard detection signals
-  signal s_Flush : std_logic;
+  signal s_Flush        : std_logic;
   signal s_FlushOrReset : std_logic;
-  signal s_Stall : std_logic;
-  signal s_notStall : std_logic;
-  
+  signal s_Stall        : std_logic;
+  signal s_notStall     : std_logic;
+
   -- Pipeline register signals
   signal s_IFID_Flush, s_IDEX_Flush, s_EXMEM_Flush, s_MEMWB_Flush : std_logic;
   signal s_IFID_Stall, s_IDEX_Stall, s_EXMEM_Stall, s_MEMWB_Stall : std_logic;
@@ -257,17 +257,17 @@ architecture mixed of pipe is
   alias a_in_ifid_PCplus4      : std_logic_vector (31 downto 0) is s_in_IFID (63 downto 32);
   alias a_out_ifid_PCplus4     : std_logic_vector (31 downto 0) is s_out_IFID (63 downto 32);
   -- IFID Instruction aliases
-  alias a_out_IFID_Opcode     : std_logic_vector (5 downto 0) is a_out_ifid_Instruction (31 downto 26);
-  alias a_out_IFID_Rs         : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (25 downto 21);
-  alias a_out_IFID_Rt         : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (20 downto 16);
-  alias a_out_IFID_BranchCode : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (20 downto 16);
-  alias a_out_IFID_Rd         : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (15 downto 11);
-  alias a_out_IFID_Shamt      : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (10 downto 6);
-  alias a_out_IFID_Funct      : std_logic_vector (5 downto 0) is a_out_ifid_Instruction (5 downto 0);
-  alias a_out_IFID_ImmOrAddr  : std_logic_vector (15 downto 0) is a_out_ifid_Instruction (15 downto 0);
-  alias a_out_IFID_JumpAddr   : std_logic_vector (25 downto 0) is a_out_ifid_Instruction (25 downto 0);
+  alias a_out_IFID_Opcode      : std_logic_vector (5 downto 0) is a_out_ifid_Instruction (31 downto 26);
+  alias a_out_IFID_Rs          : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (25 downto 21);
+  alias a_out_IFID_Rt          : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (20 downto 16);
+  alias a_out_IFID_BranchCode  : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (20 downto 16);
+  alias a_out_IFID_Rd          : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (15 downto 11);
+  alias a_out_IFID_Shamt       : std_logic_vector (4 downto 0) is a_out_ifid_Instruction (10 downto 6);
+  alias a_out_IFID_Funct       : std_logic_vector (5 downto 0) is a_out_ifid_Instruction (5 downto 0);
+  alias a_out_IFID_ImmOrAddr   : std_logic_vector (15 downto 0) is a_out_ifid_Instruction (15 downto 0);
+  alias a_out_IFID_JumpAddr    : std_logic_vector (25 downto 0) is a_out_ifid_Instruction (25 downto 0);
 
-  
+
   -----------------------------------------------------------------------------
   -- DO WE NEED THIS IN HERE?
   -----------------------------------------------------------------------------
@@ -283,15 +283,15 @@ architecture mixed of pipe is
   alias a_in_idex_Instruction         : std_logic_vector (31 downto 0) is s_in_IDEX (31 downto 0);
   alias a_out_idex_Instruction        : std_logic_vector (31 downto 0) is s_out_IDEX (31 downto 0);
   -- IDEX Instruction aliases
-  alias a_out_IDEX_Opcode     : std_logic_vector (5 downto 0) is a_out_idex_Instruction (31 downto 26);
-  alias a_out_IDEX_Rs         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (25 downto 21);
-  alias a_out_IDEX_Rt         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
-  alias a_out_IDEX_BranchCode : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
-  alias a_out_IDEX_Rd         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (15 downto 11);
-  alias a_out_IDEX_Shamt      : std_logic_vector (4 downto 0) is a_out_idex_Instruction (10 downto 6);
-  alias a_out_IDEX_Funct      : std_logic_vector (5 downto 0) is a_out_idex_Instruction (5 downto 0);
-  alias a_out_IDEX_ImmOrAddr  : std_logic_vector (15 downto 0) is a_out_idex_Instruction (15 downto 0);
-  alias a_out_IDEX_JumpAddr   : std_logic_vector (25 downto 0) is a_out_idex_Instruction (25 downto 0);
+  alias a_out_IDEX_Opcode             : std_logic_vector (5 downto 0) is a_out_idex_Instruction (31 downto 26);
+  alias a_out_IDEX_Rs                 : std_logic_vector (4 downto 0) is a_out_idex_Instruction (25 downto 21);
+  alias a_out_IDEX_Rt                 : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
+  alias a_out_IDEX_BranchCode         : std_logic_vector (4 downto 0) is a_out_idex_Instruction (20 downto 16);
+  alias a_out_IDEX_Rd                 : std_logic_vector (4 downto 0) is a_out_idex_Instruction (15 downto 11);
+  alias a_out_IDEX_Shamt              : std_logic_vector (4 downto 0) is a_out_idex_Instruction (10 downto 6);
+  alias a_out_IDEX_Funct              : std_logic_vector (5 downto 0) is a_out_idex_Instruction (5 downto 0);
+  alias a_out_IDEX_ImmOrAddr          : std_logic_vector (15 downto 0) is a_out_idex_Instruction (15 downto 0);
+  alias a_out_IDEX_JumpAddr           : std_logic_vector (25 downto 0) is a_out_idex_Instruction (25 downto 0);
   --
   alias a_in_idex_PCplus4             : std_logic_vector (31 downto 0) is s_in_IDEX (63 downto 32);
   alias a_out_idex_PCplus4            : std_logic_vector (31 downto 0) is s_out_IDEX (63 downto 32);
@@ -320,16 +320,16 @@ architecture mixed of pipe is
   alias a_out_idex_RtData             : std_logic_vector(31 downto 0) is s_in_IDEX (120 downto 89);
   alias a_in_idex_RtData              : std_logic_vector(31 downto 0) is s_out_IDEX (120 downto 89);
   alias a_in_IDEX_SignExtImmOrAddr    : std_logic_vector(31 downto 0) is s_in_IDEX(152 downto 121);
-  alias a_out_IDEX_SignExtImmOrAddr   :	std_logic_vector(31 downto 0) is s_out_IDEX(152 downto 121);
-  alias a_out_IDEX_WBAddr : std_logic_vector (4 downto 0) is s_out_IDEX (157 downto 153);
-  alias a_in_IDEX_WBAddr : std_logic_vector (4 downto 0) is s_in_IDEX (157 downto 153);
-  
+  alias a_out_IDEX_SignExtImmOrAddr   : std_logic_vector(31 downto 0) is s_out_IDEX(152 downto 121);
+  alias a_out_IDEX_WBAddr             : std_logic_vector (4 downto 0) is s_out_IDEX (157 downto 153);
+  alias a_in_IDEX_WBAddr              : std_logic_vector (4 downto 0) is s_in_IDEX (157 downto 153);
+
   --
   --alias a_in_ifid_JumpAddress         : std_logic_vector (31 downto 0) is s_in_IFID (95 downto 64);
   --alias a_out_ifid_JumpAddress        : std_logic_vector (31 downto 0) is s_out_IFID (95 downto 64);
   --alias a_in_ifid_BranchAddress       : std_logic_vector (31 downto 0) is s_in_IFID (127 downto 96);
   --alias a_out_ifid_BranchAddress      : std_logic_vector (31 downto 0) is s_out_IFID (127 downto 96);
-  
+
 
 
   --EX/MEM alias
@@ -416,7 +416,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       o_Cout => open);
   a_in_idex_PCplus4 <= s_PCplus4;
 
-  
+
   -- not stall for WEN of PC
   s_notStall <= not s_Stall;
   -----------------------------------------------------------------------------
@@ -539,9 +539,9 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
       i_IDEX_WBAddr             => a_out_IDEX_WBAddr,
       i_IFID_RsAddr             => a_out_IFID_Rs,
       i_IFID_RtAddr             => a_out_IFID_Rt,
-      i_ID_ALUInputBSource      => a_out_IDEX_ALUInputBSource,
+      i_ID_ALUInputBSource      => a_in_IDEX_ALUInputBSource,
       i_IDEX_NextPCSource       => a_out_IDEX_NextPCSource,
-      i_IDEX_BranchDecision     => s_IDEX_BranchDecision,
+      i_IDEX_BranchDecision     => a_out_IDEX_BranchDecision,
       o_Stall                   => s_Stall,
       o_Flush                   => s_Flush);
 
@@ -566,22 +566,69 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   with s_RegWriteAddrSource select
     a_in_IDEX_WBAddr <=
-    a_out_IFID_Rd                         when "00",
-    a_out_IFID_Rt                         when "01",
+    a_out_IFID_Rd                when "00",
+    a_out_IFID_Rt                when "01",
     "11111"                      when "10",  -- $ra for linking
     (others => s_BranchDecision) when "11",  -- $zero or $ra for branch linking
     "00000"                      when others;  -- should never happen
 
 
   -----------------------------------------------------------------------------
+  -- Register File
+  -----------------------------------------------------------------------------
+  register_file : mips_regfile
+    port map(
+      i_raddr1  => a_out_IFID_Rs,
+      i_raddr2  => a_out_IFID_Rt,
+      i_waddr   => a_out_MEMWB_RegWriteAddr,    -- s_RegWriteAddr
+      i_wdata   => a_out_MEMWB_RegWriteData,    -- s_RegWriteData
+      i_wenable => a_out_MEMWB_RegWriteEnable,  -- s_RegWriteEnable
+      i_clk     => i_Clk,
+      i_rst     => i_Rst,
+      o_rdata1  => s_RsReadData,
+      o_rdata2  => s_RtReadData);
+
+  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+  -----------------------------------------------------------------------------
+  -- s_FWD_ID_RsSource forwarding mux
+  -----------------------------------------------------------------------------
+  -- 00 = s_RsReadData
+  -- 01 = a_in_EXMEM_ALUResult
+  -- 10 = a_in_MEMWB_MemReadData
+  -- 11 = a_in_MEMWB_ALUResult
+  -----------------------------------------------------------------------------
+  s_FWD_ID_Rs <= s_RsReadData when s_FWD_ID_RsSource = "00" else
+                 a_in_EXMEM_ALUResult   when s_FWD_ID_RsSource = "01" else
+                 a_in_MEMWB_MemReadData when s_FWD_ID_RsSource = "10" else
+                 a_in_MEMWB_ALUResult;
+  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+  a_in_IDEX_RsData <= s_FWD_ID_Rs;
+
+  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+  -----------------------------------------------------------------------------
+  -- s_FWD_ID_RtSource forwarding mux
+  -----------------------------------------------------------------------------
+  -- 00 = s_RtReadData
+  -- 01 = a_in_EXMEM_ALUResult
+  -- 10 = a_in_MEMWB_MemReadData
+  -- 11 = a_in_MEMWB_ALUResult
+  -----------------------------------------------------------------------------
+  s_FWD_ID_Rt <= s_RtReadData when s_FWD_ID_RsSource = "00" else
+                 a_in_EXMEM_ALUResult   when s_FWD_ID_RsSource = "01" else
+                 a_in_MEMWB_MemReadData when s_FWD_ID_RsSource = "10" else
+                 a_in_MEMWB_ALUResult;
+  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+  a_in_IDEX_RtData <= s_FWD_ID_Rt;
+
+  -----------------------------------------------------------------------------
   -- Brancher logic unit
   -----------------------------------------------------------------------------
   branching_logic : brancher
     port map (
-      i_A              => s_RsReadData,
-      i_B              => s_RtReadData,
-      i_BranchType     => s_BranchType,
-      o_BranchDecision => s_BranchDecision);
+      i_A              => s_FWD_ID_Rs,
+      i_B              => s_FWD_ID_Rt,
+      i_BranchType     => a_in_IDEX_BranchType,
+      o_BranchDecision => a_in_IDEX_BranchDecision);
 
 
   -----------------------------------------------------------------------------
@@ -590,7 +637,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- 0 = PC+4
   -- 1 = BranchAddress
   -----------------------------------------------------------------------------
-  s_BranchDecisionAddress <= s_PCplus4 when s_BranchDecision = '0' else s_BranchAddress;
+  s_BranchDecisionAddress <= a_out_IFID_PCplus4 when a_in_IDEX_BranchDecision = '0' else s_BranchAddress;
 
 
 
@@ -599,7 +646,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   shifter_BranchOffset : n_shifter
     port map (
-      i_A   => s_SignExtImmOrAddr,
+      i_A   => a_out_IFID_SignExtImmOrAddr,
       i_In  => '0',
       i_Sel => '1',
       o_F   => s_BranchOffsetShifted);
@@ -610,14 +657,14 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   branch_addr_adder : fan
     port map (
       i_A    => s_BranchOffsetShifted,
-      i_B    => s_PCplus4,
+      i_B    => a_in_IFID_PCplus4,
       i_Cin  => '0',
-      o_S    => a_in_ifid_BranchAddress,  -- s_BranchAddress
+      o_S    => s_BranchAddress,
       o_Cout => open);
 
 
   -- Jump address dummy matching bit size for input into a shifter
-  s_JumpAddrExtended <= "000000" & a_JumpAddr;
+  s_JumpAddrExtended <= "000000" & a_out_IFID_JumpAddr;
 
   -----------------------------------------------------------------------------
   -- Jump address shifter (two left)
@@ -632,16 +679,11 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
   -- final calculated jump address
-  a_in_ifid_JumpAddress <= s_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);  --
-  --s_JumpAddress
+  s_JumpAddress <= a_out_IFID_PCplus4(31 downto 28) & s_JumpAddrShifted(27 downto 0);
 
-  -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  -- TODO: needs some attention....
-  s_JumpRegAddress <= s_RsReadData;
-  -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  -- final jump register address (with forwarding)
+  s_JumpRegAddress <= s_FWD_ID_Rs;
 
   -----------------------------------------------------------------------------
   -- Upper immediate shifter (sixteen left)
@@ -650,32 +692,12 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
     generic map (
       n => 4)
     port map (
-      i_A   => s_SignExtImmOrAddr,
+      i_A   => a_out_IFID_SignExtImmOrAddr,
       i_In  => '0',
       i_Sel => '1',
-      o_F   => s_UpperImm);
+      o_F   => a_in_IDEX_UpperImm);
 
 
-  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
-  -----------------------------------------------------------------------------
-  -- s_FWD_ID_RsSource forwarding mux
-  -----------------------------------------------------------------------------
-  -- 0 = dummy
-  -- 1 = dummy
-  -----------------------------------------------------------------------------
-  s_FWD_ID_RsSource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
-  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
-
-
-  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
-  -----------------------------------------------------------------------------
-  -- s_FWD_ID_RtSource forwarding mux
-  -----------------------------------------------------------------------------
-  -- 0 = dummy
-  -- 1 = dummy
-  -----------------------------------------------------------------------------
-  s_FWD_ID_RtSource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
-  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
 
 
   -- OLD RtReadAddr mux -- DO NOT NEED IT ANYMORE -- REPLACED BY Brancher unit
@@ -690,26 +712,9 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-
-
-  -----------------------------------------------------------------------------
-  -- Register File
-  -----------------------------------------------------------------------------
-  register_file : mips_regfile
-    port map(
-      i_raddr1  => a_Rs,
-      i_raddr2  => a_Rt,
-      i_waddr   => s_RegWriteAddr,
-      i_wdata   => s_RegWriteData,
-      i_wenable => s_RegWriteEnable,
-      i_clk     => i_Clk,
-      i_rst     => i_Rst,
-      o_rdata1  => s_RsReadData,
-      o_rdata2  => s_RtReadData);
-
-
-
-
+  -- forward from previous stage to this stage
+  a_in_IDEX_Instruction <= a_out_IFID_Instruction;
+  a_in_IDEX_PCplus4     <= a_out_IFID_PCplus4;
 
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
@@ -749,6 +754,16 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
 
 
+  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+  -----------------------------------------------------------------------------
+  -- s_FWD_EX_InputASource forwarding mux
+  -----------------------------------------------------------------------------
+  -- 0 = a_out_IDEX_RsReadData
+  -- 1 = a_in_MEMWB_MemReadData
+  -----------------------------------------------------------------------------
+  s_FWD_EX_InputA <= a_out_IDEX_RsReadData when s_FWD_EX_InputASource = '0' else a_in_MEMWB_MemReadData;
+  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+
 
   -----------------------------------------------------------------------------
   -- s_ALUInputBSource mux
@@ -757,28 +772,17 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- 0 = $Rt
   -- 1 = SignExtImm
   -----------------------------------------------------------------------------
-  s_ALUInputB <= s_RtReadData when s_ALUInputBSource = '0' else s_SignExtImmOrAddr;
-
-
-  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
-  -----------------------------------------------------------------------------
-  -- s_FWD_EX_InputASource forwarding mux
-  -----------------------------------------------------------------------------
-  -- 0 = dummy
-  -- 1 = dummy
-  -----------------------------------------------------------------------------
-  s_FWD_EX_InputASource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
-  -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
+  s_ALUInputB <= a_out_IDEX_RtReadData when a_out_IDEX_ALUInputBSource = '0' else a_out_IDEX_SignExtImmOrAddr;
 
 
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
   -----------------------------------------------------------------------------
   -- s_FWD_EX_InputBSource forwarding mux
   -----------------------------------------------------------------------------
-  -- 0 = dummy
-  -- 1 = dummy
+  -- 0 = s_ALUInputB
+  -- 1 = a_in_MEMWB_MemReadData
   -----------------------------------------------------------------------------
-  s_FWD_EX_InputBSource <= s_DUMMY when s_DUMMY = '0' else s_DUMMY;
+  s_FWD_EX_InputB <= s_ALUInputB when s_FWD_EX_InputB = '0' else a_in_MEMWB_MemReadData;
   -- -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -> -
 
 
@@ -788,12 +792,12 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   alu : mips_alu
     port map (
-      i_A           => s_RsReadData,
-      i_B           => s_ALUInputB,
-      o_R           => s_ALUResult,
-      i_ShiftAmount => a_Shamt,
-      i_Function    => s_ALUFunction,
-      o_ZeroFlag    => s_ALUFlagZero);
+      i_A           => s_FWD_EX_InputA,
+      i_B           => s_FWD_EX_InputB,
+      o_R           => a_in_EXMEM_ALUResult,
+      i_ShiftAmount => a_out_IDEX_Shamt,
+      i_Function    => a_out_IDEX_ALUFunction,
+      o_ZeroFlag    => open);           -- not needed anymore (brancher)
 
 
   -- OLD BRANCH CONTROL
@@ -806,7 +810,11 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
 
 
 
-
+  -- forward from previous stage to this stage
+  a_in_EXMEM_PCplus4  <= a_out_IDEX_PCplus4;
+  a_in_EXMEM_WBAddr   <= a_out_IDEX_WBAddr;
+  a_in_EXMEM_UpperImm <= a_out_IDEX_UpperImm;
+  a_in_EXMEM_RtData   <= a_out_IDEX_RtData;
 
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
@@ -851,14 +859,20 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -----------------------------------------------------------------------------
   data_memory : mips_mem
     port map(
-      i_addr   => s_ALUResult,
-      i_wdata  => s_RtReadData,
-      i_size   => s_MemDataLength,
-      i_signed => s_MemDataSigned,
-      i_wen    => s_MemWriteEnable,
+      i_addr   => a_out_EXMEM_ALUResult,
+      i_wdata  => a_out_EXMEM_RtReadData,
+      i_size   => a_out_EXMEM_MemDataLength,
+      i_signed => a_out_EXMEM_MemDataSigned,
+      i_wen    => a_out_EXMEM_MemWriteEnable,
       i_clk    => i_Clk,
-      o_rdata  => s_MemReadData);
+      o_rdata  => a_in_MEMWB_MemReadData);
 
+
+  -- forward from previous stage to this stage
+  a_in_MEMWB_PCplus4   <= a_out_EXMEM_PCplus4;
+  a_in_MEMWB_WBAddr    <= a_out_EXMEM_WBAddr;
+  a_in_MEMWB_UpperImm  <= a_out_EXMEM_UpperImm;
+  a_in_MEMWB_ALUResult <= a_out_EXMEM_ALUResult;
 
   --///////////////////////////////////////////////////////////////////////////
   -----------------------------------------------------------------------------
@@ -908,13 +922,13 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- 10 = Upper Immediate (LUI)
   -- 11 = PC+4 (for linking)
   -----------------------------------------------------------------------------
-  with s_RegWriteDataSource select
-    s_RegWriteData <=
-    s_ALUResult   when "00",
-    s_MemReadData when "01",
-    s_UpperImm    when "10",
-    s_PCplus4     when "11",
-    X"00000000"   when others;          -- should never happen
+  with a_out_MEMWB_RegWriteDataSource select
+    a_out_MEMWB_RegWriteData <=
+    a_out_MEMWB_ALUResult   when "00",
+    a_out_MEMWB_MemReadData when "01",
+    a_out_MEMWB_UpperImm    when "10",
+    a_out_MEMWB_PCplus4     when "11",
+    X"00000000"             when others;  -- should never happen
 
   
 end architecture mixed;
