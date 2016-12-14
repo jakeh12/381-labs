@@ -22,8 +22,8 @@ architecture behavioural of forwarder_tb is
 	o_FWD_ID_RsSource : out std_logic_vector ( 1 downto 0 );
 	o_FWD_ID_RtSource : out std_logic_vector ( 1 downto 0 );
 	o_FWD_EX_InputASource : out std_logic;
-	o_FWD_EX_InputBSource : out std_logic;
-	     )
+	o_FWD_EX_InputBSource : out std_logic
+	     );
 
 	end component;
 
@@ -56,7 +56,7 @@ begin
 	begin
 	
 		--set to zero
-		idaluinputbsource <= "00";
+		idaluinputbsource <= '0';
 		idrs <= "00000";
 		idrt <= "00000";
 		idexregwriteenable <= '0';
@@ -71,28 +71,29 @@ begin
 		wait for 10 ns;
 
 
-
-		idaluinputbsource <= "00";
+		--test write enable
+		idaluinputbsource <= '0';
 		idrs <= "00001";
 		idrt <= "00000";
 		idexregwriteenable <= '0';
-		idexrs <= "00001";
+		idexrs <= "00000";
 		idexrt <= "00000";
-		idexwb <= "00000";
+		idexwb <= "00001";
 		iexmemregwriteenable <= '0';
 		iexmemregwritedatasource <="00";
 		iexmemrs <= "00000";
 		iexmemrt <= "00000";
 		iexmemwb <= "00000";
 		wait for 10 ns;
-
-		idaluinputbsource <= "00";
+		
+		--test ex rs
+		idaluinputbsource <= '0';
 		idrs <= "00001";
 		idrt <= "00000";
 		idexregwriteenable <= '1';
 		idexrs <= "00001";
 		idexrt <= "00000";
-		idexwb <= "00000";
+		idexwb <= "00001";
 		iexmemregwriteenable <= '0';
 		iexmemregwritedatasource <="00";
 		iexmemrs <= "00000";
@@ -100,14 +101,14 @@ begin
 		iexmemwb <= "00000";
 		wait for 10 ns;
 
-
-		idaluinputbsource <= "00";
+		--test ex rt
+		idaluinputbsource <= '0';
 		idrs <= "00000";
 		idrt <= "00001";
 		idexregwriteenable <= '1';
 		idexrs <= "00000";
-		idexrt <= "00001";
-		idexwb <= "00000";
+		idexrt <= "00000";
+		idexwb <= "00001";
 		iexmemregwriteenable <= '0';
 		iexmemregwritedatasource <="00";
 		iexmemrs <= "00000";
@@ -115,17 +116,36 @@ begin
 		iexmemwb <= "00000";
 		wait for 10 ns;
 
-		idaluinputbsource <= "00";
-		idrs <= "00000";
-		idrt <= "00001";
+		--test mem load rs
+		idaluinputbsource <= '0';
+		idrs <= "00001";
+		idrt <= "00000";
 		idexregwriteenable <= '1';
 		idexrs <= "00000";
-		idexrt <= "00001";
+		idexrt <= "00000";
 		idexwb <= "00000";
-		iexmemregwriteenable <= '0';
-		iexmemregwritedatasource <="00";
-		iexmemrs <= "00000";
+		iexmemregwriteenable <= '1';
+		iexmemregwritedatasource <="01";
+		iexmemrs <= "00001";
 		iexmemrt <= "00000";
 		iexmemwb <= "00000";
 		wait for 10 ns;
+
+		--test mem rs
+		idaluinputbsource <= '0';
+		idrs <= "00001";
+		idrt <= "00000";
+		idexregwriteenable <= '1';
+		idexrs <= "00000";
+		idexrt <= "00000";
+		idexwb <= "00000";
+		iexmemregwriteenable <= '1';
+		iexmemregwritedatasource <="00";
+		iexmemrs <= "00001";
+		iexmemrt <= "00000";
+		iexmemwb <= "00000";
+		wait for 10 ns;
+
+
+	end process;
 end behavioural;

@@ -18,14 +18,12 @@ entity forwarder is
 	o_FWD_ID_RsSource : out std_logic_vector ( 1 downto 0 );
 	o_FWD_ID_RtSource : out std_logic_vector ( 1 downto 0 );
 	o_FWD_EX_InputASource : out std_logic;
-	o_FWD_EX_InputBSource : out std_logic;
-	     )
-
+	o_FWD_EX_InputBSource : out std_logic );
      end forwarder;
 
 architecture behavioural of forwarder is
 begin
-	aluInputs_forwarder: process ( i_ID_Rs, i_ID_Rt, i_IDEX_WB, i_IDEX_ReWriteEnable, i_IDEX_RegWriteDataSource, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
+	aluInputs_forwarder: process ( i_ID_Rs, i_ID_Rt, i_IDEX_WB, i_IDEX_RegWriteEnable, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
 	begin
 		--forward to ALU
 		--if mem is using a load
@@ -45,12 +43,12 @@ begin
 	end process;
 	
 
-	rs_forwarder: process ( i_ID_Rs, i_IDEX_WB, i_IDEX_ReWriteEnable, i_IDEX_RegWriteDataSource, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
+	rs_forwarder: process ( i_ID_Rs, i_IDEX_WB, i_IDEX_RegWriteEnable, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
 	begin
 		--if rs is the zero register
 		if i_ID_Rs = "00000" then o_FWD_ID_RsSource <= "00";
 		--if rs matches the write back of idex
-		elsif i_ID_Rs = i_IDEX_WB and i_IDEX_ReWriteEnable = '1' then o_FWD_ID_RsSource <= "01";
+		elsif i_ID_Rs = i_IDEX_WB and i_IDEX_RegWriteEnable = '1' then o_FWD_ID_RsSource <= "01";
 		--if rs matches the writeback of exmem and exmem is a load instruction
 		elsif i_ID_Rs = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' and i_EXMEM_RegWriteDataSource = "01" then o_FWD_ID_RsSource <= "10";
 		--if rs matches the writeback of exmem and exmem is NOT a load
@@ -61,14 +59,14 @@ begin
 	end process;
 
 
-	rt_forwarder: process ( i_ID_Rt, i_IDEX_WB, i_IDEX_ReWriteEnable, i_IDEX_RegWriteDataSource, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
+	rt_forwarder: process ( i_ID_Rt, i_IDEX_WB, i_IDEX_RegWriteEnable, i_EXMEM_RegWriteEnable, i_EXMEM_RegWriteDataSource)
 	begin
 		--if rt is an I type
 		if i_ID_ALUInputBSource = '1' then o_FWD_ID_RtSource <= "00";
 		--if rt is zero register
-		elsif i_ID_Rt = 0 then o_FWD_ID_RtSource <= "00";
+		elsif i_ID_Rt = "00000" then o_FWD_ID_RtSource <= "00";
 		--if rt is the WB of idex
-		elsif i_ID_Rt = i_IDEX_WB and i_IDEX_ReWriteEnable = '1' then o_FWD_ID_RtSource <= "01";
+		elsif i_ID_Rt = i_IDEX_WB and i_IDEX_RegWriteEnable = '1' then o_FWD_ID_RtSource <= "01";
 		--if rt matches WB of exmem and exmem is a load
 		elsif i_ID_Rt = i_EXMEM_WB and i_EXMEM_RegWriteEnable = '1' and i_EXMEM_RegWriteDataSource = "01" then o_FWD_ID_RtSource <= "10";
 		--if rt matches wb of exmem and is NOT a load
