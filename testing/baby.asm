@@ -1,14 +1,3 @@
-addi $ra, $zero, -1
-nop
-nop
-nop
-nop
-nop
-sw $ra, 0($zero)
-nop
-nop
-nop
-nop
-nop
-nop
-lw $ra, 0($zero)
+addi $ra, $zero, 1
+sw $ra, 0($ra)
+lw $t1, 0($ra)
