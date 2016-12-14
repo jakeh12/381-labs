@@ -505,12 +505,12 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
     generic map (
       CONF_ENABLE_BRANCH_DELAY_SLOT => '1')
     port map (
-      i_IDEX_RegWriteDataSource => s_IDEX_RegWriteDataSource,
+      i_IDEX_RegWriteDataSource => a_out_idex_RegWriteDataSource,
       i_IDEX_WBAddr             => s_IDEX_WBAddr,
       i_IFID_RsAddr             => s_IFID_RsAddr,
       i_IFID_RtAddr             => s_IFID_RtAddr,
-      i_ID_ALUInputBSource      => s_ID_ALUInputBSource,
-      i_IDEX_NextPCSource       => s_IDEX_NextPCSource,
+      i_ID_ALUInputBSource      => a_out_idex_ALUInputBSource,
+      i_IDEX_NextPCSource       => a_out_idex_NextPCSource,
       i_IDEX_BranchDecision     => s_IDEX_BranchDecision,
       o_Stall                   => s_Stall,
       o_Flush                   => s_Flush);
