@@ -607,7 +607,7 @@ begin  -- ARCHITECTURE DEFINITION STARTS HERE --
   -- 10 = $ra (for linking)
   -- 11 = $zero or $ra (for branch linking)
   -----------------------------------------------------------------------------
-  with s_RegWriteAddrSource select
+  with a_in_IDEX_RegWriteAddrSource select
     a_in_IDEX_WBAddr <=
     a_out_IFID_Rd                when "00",
     a_out_IFID_Rt                when "01",

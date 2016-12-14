@@ -25,7 +25,7 @@ begin  -- architecture behavioral
 
   DUT: pipe
     generic map (
-      PROGRAM_FILE => "testing/full_ls_test.mif",  -- INPUT TEST PROGRAM HERE
+      PROGRAM_FILE => "testing/baby.mif",  -- INPUT TEST PROGRAM HERE
       BRANCH_DELAY_SLOT => '0')
     port map (
       i_clk => s_clk,
