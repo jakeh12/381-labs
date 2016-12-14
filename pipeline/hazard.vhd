@@ -3,20 +3,21 @@ library ieee;
 use ieee.std_logic_1164.all;
 -------------------------------------------------------------------------------
 entity hazard is
+  generic (
+    CONF_ENABLE_BRANCH_DELAY_SLOT : std_logic := '1');
   port (
     i_IDEX_RegWriteDataSource : in std_logic_vector (1 downto 0);
     i_IDEX_WBAddr             : in std_logic_vector (4 downto 0);
     i_IFID_RsAddr             : in std_logic_vector (4 downto 0);
     i_IFID_RtAddr             : in std_logic_vector (4 downto 0);
     i_ID_ALUInputBSource      : in std_logic;
+    i_IDEX_NextPCSource       : in std_logic_vector (1 downto 0);
+    i_IDEX_BranchDecision     : in std_logic;
     o_Stall                   : out std_logic;
-    o_Flush                   : out std_logic
-    );
+    o_Flush                   : out std_logic);
 end hazard;
 -------------------------------------------------------------------------------
 architecture behavioral of hazard is
-
-  constant CONF_ENABLE_BRANCH_DELAY_SLOT : std_logic := '1';
   
 begin  -- behavioral
 
